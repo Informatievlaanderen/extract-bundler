@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM node:lts-alpine
 
 LABEL maintainer "agentschap Informatie Vlaanderen <informatie.vlaanderen@vlaanderen.be>"
 

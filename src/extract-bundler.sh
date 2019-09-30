@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
-set -e
+#!/bin/sh
 
-node extract-bundler.js
+node /extract-bundler/extract-bundler.js
