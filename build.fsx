@@ -50,7 +50,7 @@ let product = "Basisregisters Vlaanderen"
 let copyright = "Copyright (c) Vlaamse overheid"
 let company = "Vlaamse overheid"
 
-let dockerRepository = "extract-bundler"
+let dockerRepository = "public-api"
 let assemblyVersionNumber = (sprintf "2.%s")
 let nugetVersionNumber = (sprintf "%s")
 
@@ -60,10 +60,10 @@ let push = push dockerRepository
 // Solution -----------------------------------------------------------------------
 
 Target "Containerize_App" (fun _ ->
-  CopyDir (buildDir @@ "BaseRegistries" @@ "linux") dockerRepository allFiles
-  containerize "BaseRegistries" dockerRepository)
+  CopyDir (buildDir @@ "BaseRegistries" @@ "linux") "extract-bundler" allFiles
+  containerize "BaseRegistries" "extract-bundler")
 
-Target "PushContainer_App" (fun _ -> push dockerRepository)
+Target "PushContainer_App" (fun _ -> push "extract-bundler")
 
 // --------------------------------------------------------------------------------
 
