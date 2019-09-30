@@ -60,7 +60,8 @@ let push = push dockerRepository
 // Solution -----------------------------------------------------------------------
 
 Target "Containerize_App" (fun _ ->
-  CopyDir (buildDir @@ "BaseRegistries" @@ "linux") "extract-bundler" allFiles
+  CopyDir (buildDir @@ "BaseRegistries" @@ "linux") "src" allFiles
+  CopyDir (buildDir @@ "BaseRegistries" @@ "linux" @@ "node_modules") "node_modules" allFiles
   containerize "BaseRegistries" "extract-bundler")
 
 Target "PushContainer_App" (fun _ -> push "extract-bundler")
