@@ -9,30 +9,9 @@ const s3 = new AWS.S3();
 const archiveFormat = 'zip';
 
 const bundle = () => {
-  const {
-    EXTRACTDOWNLOADURLS = '',
-    S3_BUCKET,
-    S3_DESTINATIONPATH = '',
-    BUNDLENAME
-  } = process.env;
+  const config = loadEnvironmentConfig();
 
-  if (!S3_BUCKET)
-    throw 'Environment variable S3_BUCKET is not set';
-
-  if (!BUNDLENAME)
-    throw 'Environment variable BUNDLEFILENAME is not set';
-
-  let extractDownloadUrls = EXTRACTDOWNLOADURLS
-    .split(',')
-    .map(url => url.trim())
-    .filter(url => url);
-
-  const uploadOptions = {
-    Bucket: S3_BUCKET,
-    Key: `${S3_DESTINATIONPATH}${BUNDLENAME}-${getDateString()}.${archiveFormat}`
-  };
-
-  pushExtractsToS3(extractDownloadUrls, uploadOptions)
+  pushExtractsToS3(config)
     .then(result => { console.log('Uploaded extract bundle', result); })
     .catch(error => {
       console.log('Failed to upload bundle', { error, extractDownloadUrls, uploadOptions });
@@ -40,7 +19,7 @@ const bundle = () => {
     });
 };
 
-const pushExtractsToS3 = async (extractDownloadUrls = [], uploadOptions = {}) => {
+const pushExtractsToS3 = async ({ extractDownloadUrls = [], uploadOptions = {} }) => {
   return new Promise(async (resolve, reject) => {
     try {
       let downloadsBundle = archiver(archiveFormat);
@@ -98,6 +77,44 @@ const appendDownload = async (archive, { downloadNumber, data, headers }) => {
           archive.append(entry, { name: downloadNumber + '-' + downloadName + '/' + path });
         });
   });
+}
+
+const loadEnvironmentConfig = () => {
+  const {
+    EXTRACTDOWNLOADURLS = '',
+    S3_BUCKET,
+    S3_DESTINATIONPATH = '',
+    BUNDLENAME
+  } = process.env;
+
+  const extractDownloadUrls = EXTRACTDOWNLOADURLS
+    .split(',')
+    .map(url => url.trim())
+    .filter(url => url);
+
+  if (extractDownloadUrls.length === 0)
+    throwConfigurationException('EXTRACTDOWNLOADURLS')
+  if (!S3_BUCKET)
+    throwConfigurationException('S3_BUCKET');
+  if (!BUNDLENAME)
+    throwConfigurationException('BUNDLENAME');
+
+  return {
+    extractDownloadUrls,
+    uploadOptions: {
+      Bucket: S3_BUCKET,
+      Key: `${S3_DESTINATIONPATH}${BUNDLENAME}-${getDateString()}.${archiveFormat}`
+    }
+  }
+}
+
+const throwConfigurationException = variableName => {
+  throw `Environment variable ${variableName} not set!`
+  + '\n\nEnvironment variables:'
+  + '\n EXTRACTDOWNLOADURLS : string containing a comma separated list of download urls'
+  + '\n S3_BUCKET : S3 bucket name'
+  + '\n S3_DESTINATIONPATH : optional, prefix for the uploaded bundle'
+  + '\n BUNDLENAME : name of bundle that will be suffixed with the date';
 }
 
 const getDateString = () => {
