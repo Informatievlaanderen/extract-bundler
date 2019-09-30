@@ -1,5 +1,7 @@
 FROM alpine:latest
 
+LABEL maintainer "agentschap Informatie Vlaanderen <informatie.vlaanderen@vlaanderen.be>"
+
 COPY extract-bundler.sh /extract-bundler/extract-bundler.sh
 COPY extract-bundler.js /extract-bundler/extract-bundler.js
 COPY node_modules  /extract-bundler/node_modules
