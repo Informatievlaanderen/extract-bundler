@@ -6,18 +6,10 @@ const unzip = require('unzip-stream');
 const archiver = require('archiver');
 const { logInfo, logError } = require('./datadog-logging');
 
+const config = require('./configuration').load();
 const s3 = new AWS.S3();
-const archiveFormat = 'zip';
 
-const bundle = () => {
-  const config = loadEnvironmentConfig();
-
-  pushExtractsToS3(config)
-    .then(result => { logInfo('Uploaded extract bundle', result); })
-    .catch(error => { logError('Failed to upload bundle', error, config); });
-};
-
-const pushExtractsToS3 = async ({ extractDownloadUrls, uploadOptions = {} }) => {
+const bundle = async ({ extractDownloadUrls, archiveFormat, uploadOptions = {} }) => {
   return new Promise(async (resolve, reject) => {
     try {
       let downloadsBundle = archiver(archiveFormat);
@@ -77,57 +69,6 @@ const appendDownload = async (archive, { downloadNumber, data, headers }) => {
   });
 }
 
-const loadEnvironmentConfig = () => {
-  const {
-    EXTRACTDOWNLOADURLS = '',
-    S3_BUCKET,
-    S3_DESTINATIONPATH = '',
-    BUNDLENAME
-  } = process.env;
-
-  const extractDownloadUrls = EXTRACTDOWNLOADURLS
-    .split(',')
-    .map(url => url.trim())
-    .filter(url => url);
-
-  if (extractDownloadUrls.length === 0)
-    throwConfigurationException('EXTRACTDOWNLOADURLS')
-  if (!S3_BUCKET)
-    throwConfigurationException('S3_BUCKET');
-  if (!BUNDLENAME)
-    throwConfigurationException('BUNDLENAME');
-
-  return {
-    extractDownloadUrls,
-    uploadOptions: {
-      Bucket: S3_BUCKET,
-      Key: `${S3_DESTINATIONPATH}${BUNDLENAME}-${getDateString()}.${archiveFormat}`
-    }
-  }
-}
-
-const throwConfigurationException = variableName => {
-  throw `Environment variable ${variableName} not set!`
-  + '\n\nEnvironment variables:'
-  + '\n EXTRACTDOWNLOADURLS : string containing a comma separated list of download urls'
-  + '\n S3_BUCKET : S3 bucket name'
-  + '\n S3_DESTINATIONPATH : optional, prefix for the uploaded bundle'
-  + '\n BUNDLENAME : name of bundle that will be suffixed with the date';
-}
-
-const getDateString = () => {
-  const pad = (value, length) => {
-    let padded = value.toString();
-    while (padded.length < length)
-      padded = '0' + padded;
-    return padded;
-  }
-
-  const date = new Date();
-  const month = pad(date.getMonth() + 1, 2);
-  const day = pad(date.getDate(), 2);
-
-  return `${date.getFullYear()}-${month}-${day}`;
-}
-
-bundle();
+bundle(config)
+  .then(result => { logInfo('Uploaded extract bundle', result); })
+  .catch(error => { logError('Failed to upload bundle', error, config); });
