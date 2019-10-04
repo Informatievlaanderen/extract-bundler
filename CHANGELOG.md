@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.0...v1.1.1) (2019-10-04)
+
+
+### Bug Fixes
+
+* format loggin for datadog ([69d8b21](https://github.com/informatievlaanderen/extract-bundler/commit/69d8b21))
+
 # [1.1.0](https://github.com/informatievlaanderen/extract-bundler/compare/v1.0.1...v1.1.0) (2019-09-30)
 
 
