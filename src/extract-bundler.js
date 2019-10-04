@@ -4,6 +4,7 @@ const AWS = require('aws-sdk');
 const axios = require('axios');
 const unzip = require('unzip-stream');
 const archiver = require('archiver');
+const { logInfo, logError } = require('./datadog-logging');
 
 const s3 = new AWS.S3();
 const archiveFormat = 'zip';
@@ -12,14 +13,11 @@ const bundle = () => {
   const config = loadEnvironmentConfig();
 
   pushExtractsToS3(config)
-    .then(result => { console.log('Uploaded extract bundle', result); })
-    .catch(error => {
-      console.log('Failed to upload bundle', { error, extractDownloadUrls, uploadOptions });
-      throw error;
-    });
+    .then(result => { logInfo('Uploaded extract bundle', result); })
+    .catch(error => { logError('Failed to upload bundle', error, config); });
 };
 
-const pushExtractsToS3 = async ({ extractDownloadUrls = [], uploadOptions = {} }) => {
+const pushExtractsToS3 = async ({ extractDownloadUrls, uploadOptions = {} }) => {
   return new Promise(async (resolve, reject) => {
     try {
       let downloadsBundle = archiver(archiveFormat);
@@ -59,7 +57,7 @@ const appendDownloads = async (downloadsBundle, extractDownloadUrls = []) => {
       });
       await appendDownload(downloadsBundle, { downloadNumber: i + 1, ...response });
     } catch (error) {
-      console.log('Extract download failed.', { url, error });
+      logError('Extract download failed.', error, { url });
     }
   }
 }
