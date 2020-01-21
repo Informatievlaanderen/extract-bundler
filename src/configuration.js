@@ -68,8 +68,10 @@ const throwConfigurationException = variableName => {
 const getDateString = () => {
     const pad = (value, length) => {
         let padded = value.toString();
+
         while (padded.length < length)
             padded = '0' + padded;
+
         return padded;
     }
 
