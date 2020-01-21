@@ -1,3 +1,11 @@
+## [1.1.2](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.1...v1.1.2) (2020-01-21)
+
+
+### Bug Fixes
+
+* force build ([a337294](https://github.com/informatievlaanderen/extract-bundler/commit/a337294))
+* force build ([d5b3183](https://github.com/informatievlaanderen/extract-bundler/commit/d5b3183))
+
 ## [1.1.1](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.0...v1.1.1) (2019-10-04)
 
 
