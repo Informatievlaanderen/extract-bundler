@@ -1,3 +1,11 @@
+## [1.1.3](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.2...v1.1.3) (2020-01-27)
+
+
+### Bug Fixes
+
+* refine logging ([c809f19](https://github.com/informatievlaanderen/extract-bundler/commit/c809f19))
+* reword messages to clearify the process ([5ac4b4d](https://github.com/informatievlaanderen/extract-bundler/commit/5ac4b4d))
+
 ## [1.1.2](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.1...v1.1.2) (2020-01-21)
 
 
