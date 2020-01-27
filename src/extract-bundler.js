@@ -18,6 +18,7 @@ const bundle = async ({ extractDownloadUrls, archiveFormat, uploadOptions = {} }
         Body: downloadsBundle
       };
 
+      logInfo("Start uploading extract bundle", uploadOptions)
       s3.upload(params, (error, data) => {
         if (error) {
           reject(error);
@@ -42,14 +43,16 @@ const populateBundle = async (downloadsBundle, extractDownloadUrls = []) => {
   for (var i = 0; i < extractDownloadUrls.length; i++) {
     let url = extractDownloadUrls[i];
     try {
+      logInfo('Fetching extract', { url })
       let response = await axios({
         method: 'get',
         url: url,
         responseType: 'stream'
       });
       await appendDownload(downloadsBundle, { downloadNumber: i + 1, ...response });
+      logInfo('Extract added to bundle', { url })
     } catch (error) {
-      logError('Extract download failed.', error, { url });
+      logError('Failed to add extract content', { url, error });
     }
   }
 }
@@ -63,12 +66,13 @@ const appendDownload = async (archive, { downloadNumber, data, headers }) => {
       .on('error', error => { reject(error); })
       .pipe(unzip.Parse())
         .on('entry', async entry => {
-          let { path } = entry;
-          archive.append(entry, { name: downloadNumber + '-' + downloadName + '/' + path });
+          let name = downloadNumber + '-' + downloadName + '/' + entry.path;
+          logInfo('Appending entry to bundle', { name });
+          archive.append(entry, { name });
         });
   });
 }
 
 bundle(config)
-  .then(result => { logInfo('Uploaded extract bundle', result); })
-  .catch(error => { logError('Failed to upload bundle', error, config); });
+  .then(result => { logInfo('Finished uploading extract bundle', result); })
+  .catch(error => { logError('Failed to upload extract bundle', error, config); });
