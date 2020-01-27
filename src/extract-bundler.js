@@ -29,7 +29,7 @@ const bundle = async ({ extractDownloadUrls, archiveFormat, uploadOptions = {} }
         }
       })
 
-      await appendDownloads(downloadsBundle, extractDownloadUrls);
+      await populateBundle(downloadsBundle, extractDownloadUrls);
       downloadsBundle.finalize();
     }
     catch (error) {
@@ -38,7 +38,7 @@ const bundle = async ({ extractDownloadUrls, archiveFormat, uploadOptions = {} }
   });
 }
 
-const appendDownloads = async (downloadsBundle, extractDownloadUrls = []) => {
+const populateBundle = async (downloadsBundle, extractDownloadUrls = []) => {
   for (var i = 0; i < extractDownloadUrls.length; i++) {
     let url = extractDownloadUrls[i];
     try {
