@@ -18,7 +18,7 @@ const bundle = async ({ extractDownloadUrls, archiveFormat, uploadOptions = {} }
         Body: downloadsBundle
       };
 
-      logInfo("Uploading extract bundle", uploadOptions)
+      logInfo('Uploading extract bundle', uploadOptions)
       s3.upload(params, (error, data) => {
         if (error) {
           reject(error);
