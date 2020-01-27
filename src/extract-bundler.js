@@ -18,7 +18,7 @@ const bundle = async ({ extractDownloadUrls, archiveFormat, uploadOptions = {} }
         Body: downloadsBundle
       };
 
-      logInfo("Start uploading extract bundle", uploadOptions)
+      logInfo("Uploading extract bundle", uploadOptions)
       s3.upload(params, (error, data) => {
         if (error) {
           reject(error);
@@ -43,7 +43,7 @@ const populateBundle = async (downloadsBundle, extractDownloadUrls = []) => {
   for (var i = 0; i < extractDownloadUrls.length; i++) {
     let url = extractDownloadUrls[i];
     try {
-      logInfo('Fetching extract', { url })
+      logInfo('Start streaming extract content', { url })
       let response = await axios({
         method: 'get',
         url: url,
@@ -52,7 +52,7 @@ const populateBundle = async (downloadsBundle, extractDownloadUrls = []) => {
       await appendDownload(downloadsBundle, { downloadNumber: i + 1, ...response });
       logInfo('Extract added to bundle', { url })
     } catch (error) {
-      logError('Failed to add extract content', { url, error });
+      logError('Failed to complete adding extract to bundle', { url, error });
     }
   }
 }
@@ -67,7 +67,7 @@ const appendDownload = async (archive, { downloadNumber, data, headers }) => {
       .pipe(unzip.Parse())
         .on('entry', async entry => {
           let name = downloadNumber + '-' + downloadName + '/' + entry.path;
-          logInfo('Appending entry to bundle', { name });
+          logInfo('Streaming file to bundle', { name });
           archive.append(entry, { name });
         });
   });
