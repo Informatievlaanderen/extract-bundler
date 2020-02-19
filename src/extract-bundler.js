@@ -52,7 +52,10 @@ const populateBundle = async (downloadsBundle, extractDownloadUrls = []) => {
       await appendDownload(downloadsBundle, { downloadNumber: i + 1, ...response });
       logInfo('Extract added to bundle', { url })
     } catch (error) {
-      logError('Failed to complete adding extract to bundle', { url, error });
+      throw {
+        message: `Failed adding extract to bundle: ${url}`,
+        exceptionDetail: error
+      };
     }
   }
 }
@@ -75,4 +78,4 @@ const appendDownload = async (archive, { downloadNumber, data, headers }) => {
 
 bundle(config)
   .then(result => { logInfo('Finished uploading extract bundle', result); })
-  .catch(error => { logError('Failed to upload extract bundle', error, config); });
+  .catch(error => { logError('Failed to upload extract bundle', { bundleConfiguration: config, exception: error }); });
