@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.3...v1.1.4) (2020-02-19)
+
+
+### Bug Fixes
+
+* abort when any of the extract downloads fail ([a2395e1](https://github.com/informatievlaanderen/extract-bundler/commit/a2395e1))
+
 ## [1.1.3](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.2...v1.1.3) (2020-01-27)
 
 
