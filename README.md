@@ -1,4 +1,4 @@
-# extract-bundler
+# extract-bundler [![Build Status](https://github.com/Informatievlaanderen/extract-bundler/workflows/CI/badge.svg)](https://github.com/Informatievlaanderen/extract-bundler/actions)
 
 Combines multiple extract files into one and puts them on S3 in a streaming manner.
 
