@@ -69,7 +69,7 @@ const appendDownload = async (archive, { downloadNumber, data, headers }) => {
       .on('error', error => { reject(error); })
       .pipe(unzip.Parse())
         .on('entry', async entry => {
-          let name = downloadNumber + '-' + downloadName + '/' + entry.path;
+          let name = entry.path;
           logInfo('Streaming file to bundle', { name });
           archive.append(entry, { name });
         });
