@@ -1,3 +1,10 @@
+## [1.1.6](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.5...v1.1.6) (2020-05-20)
+
+
+### Bug Fixes
+
+* cleanup repo ([4989282](https://github.com/informatievlaanderen/extract-bundler/commit/4989282ccc7343a79456c02094a9f33593ce9cc7))
+
 ## [1.1.5](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.4...v1.1.5) (2020-05-20)
 
 
