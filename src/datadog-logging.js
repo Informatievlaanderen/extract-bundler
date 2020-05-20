@@ -17,9 +17,9 @@ const log = (logLevel, message = '', stack) => {
         logLevel = 'Debug';
 
     const datadogMessage = {
-        '@t': new Date().toISOString(), 
+        '@t': new Date().toISOString(),
         '@l': logLevel,
-        '@m': message, 
+        '@m': message,
         '@x': stack
     };
     console.log(JSON.stringify(datadogMessage));

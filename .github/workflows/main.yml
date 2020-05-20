@@ -108,9 +108,11 @@ jobs:
         aws-access-key-id: ${{ secrets.VBR_AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.VBR_AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.VBR_AWS_REGION }}
+
     - name: Login to Amazon ECR (Staging)
       if: env.RELEASE_VERSION != 'none'
       uses: aws-actions/amazon-ecr-login@v1
+
     - name: Push to Staging
       if: env.RELEASE_VERSION != 'none'
       shell: bash
@@ -144,6 +146,7 @@ jobs:
         BUILD_DOCKER_REGISTRY_PRD: ${{ secrets.VBR_BUILD_DOCKER_REGISTRY_PRD }}
         SEMVER: ${{ env.RELEASE_VERSION }}
         WORKSPACE: ${{ github.workspace }}
+
     - name: Publish to Confluence
       if: env.RELEASE_VERSION != 'none'
       shell: bash
@@ -161,6 +164,6 @@ jobs:
         CONFLUENCE_TITLE: ${{ env.REPOSITORY_NAME }}
         CONFLUENCE_USERNAME: ${{ secrets.VBR_CONFLUENCE_USER }}
         CONFLUENCE_PASSWORD: ${{ secrets.VBR_CONFLUENCE_PASSWORD }}
-        JIRA_PREFIX: Address
+        JIRA_PREFIX: ExtractBundler
         JIRA_PROJECT: GRAR
         JIRA_VERSION: ${{ env.RELEASE_VERSION }}

@@ -1,4 +1,4 @@
-framework: netstandard20, netcoreapp22, net472
+framework: netcoreapp31
 source https://api.nuget.org/v3/index.json
 
 // VBR STUFF

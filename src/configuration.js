@@ -4,14 +4,14 @@ const archiveFormat = 'zip';
 
 const loadConfiguration = () => {
     let {
-        extractDownloadUrls, 
-        bundleName, 
-        s3:{ 
-            bucket, 
+        extractDownloadUrls,
+        bundleName,
+        s3:{
+            bucket,
             destinationPath = ''
-        } 
+        }
     } = loadEnvironmentConfig();
-    
+
     if (destinationPath.length > 0){
         destinationPath = `${destinationPath}/`.replace(/\/\//g, '/');
     }
