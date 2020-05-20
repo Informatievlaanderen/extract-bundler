@@ -1,6 +1,6 @@
 {
   "name": "extract-bundler",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Combines multiple extract files into one and puts them on S3 in a streaming manner.",
   "author": "Basisregisters Vlaanderen",
   "license": "MIT",

@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.4...v1.1.5) (2020-05-20)
+
+
+### Bug Fixes
+
+* move to GH-actions ([d4c909d](https://github.com/informatievlaanderen/extract-bundler/commit/d4c909dda385872e460c35686ee4c598a4ac833c))
+
 ## [1.1.4](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.3...v1.1.4) (2020-02-19)
 
 
