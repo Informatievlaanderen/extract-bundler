@@ -1,3 +1,10 @@
+## [1.1.7](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.6...v1.1.7) (2020-05-20)
+
+
+### Bug Fixes
+
+* place files in bundle root GRAR-325 ([0ce6384](https://github.com/informatievlaanderen/extract-bundler/commit/0ce63841925e7813085723b58ae4e1a3c42c5788))
+
 ## [1.1.6](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.5...v1.1.6) (2020-05-20)
 
 
