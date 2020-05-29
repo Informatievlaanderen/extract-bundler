@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.7...v1.2.0) (2020-05-29)
+
+
+### Features
+
+* add version to bundle name GRAR-1329 ([5733eb5](https://github.com/informatievlaanderen/extract-bundler/commit/5733eb54623e7acf8d087c34b0871465c8dea5d3))
+
 ## [1.1.7](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.6...v1.1.7) (2020-05-20)
 
 
