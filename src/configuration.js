@@ -6,6 +6,7 @@ const loadConfiguration = () => {
     let {
         extractDownloadUrls,
         bundleName,
+        apiVersion,
         s3:{
             bucket,
             destinationPath = ''
@@ -16,12 +17,15 @@ const loadConfiguration = () => {
         destinationPath = `${destinationPath}/`.replace(/\/\//g, '/');
     }
 
+    let versionedBundleName = bundleName.replace(/\[VERSION\]/gi, apiVersion);
+    let fileName = `${versionedBundleName} ${getDateString()}.${archiveFormat}`;
+
     return {
         extractDownloadUrls,
         archiveFormat,
         uploadOptions: {
             Bucket: bucket,
-            Key: `${destinationPath}${bundleName}-${getDateString()}.${archiveFormat}`
+            Key: `${destinationPath}${fileName}`
         }
     }
 }
@@ -31,7 +35,8 @@ const loadEnvironmentConfig = () => {
         EXTRACTDOWNLOADURLS = '',
         S3_BUCKET,
         S3_DESTINATIONPATH = '',
-        BUNDLENAME
+        BUNDLENAME,
+        APIVERSION
     } = process.env;
 
     const extractDownloadUrls = EXTRACTDOWNLOADURLS
@@ -45,10 +50,13 @@ const loadEnvironmentConfig = () => {
         throwConfigurationException('S3_BUCKET');
     if (!BUNDLENAME)
         throwConfigurationException('BUNDLENAME');
+    if (!APIVERSION)
+        throwConfigurationException("APIVERSION");
 
     return {
         extractDownloadUrls,
         bundleName: BUNDLENAME,
+        apiVersion: APIVERSION,
         s3: {
             bucket: S3_BUCKET,
             destinationPath: S3_DESTINATIONPATH
@@ -62,7 +70,8 @@ const throwConfigurationException = variableName => {
     + '\n EXTRACTDOWNLOADURLS : string containing a comma separated list of download urls'
     + '\n S3_BUCKET : S3 bucket name'
     + '\n S3_DESTINATIONPATH : optional, prefix for the uploaded bundle'
-    + '\n BUNDLENAME : name of bundle that will be suffixed with the date';
+    + '\n BUNDLENAME : name of bundle that will be suffixed with the date, [VERSION] can be used as placeholder for API version'
+    + '\n APIVERSION : current api version';
 }
 
 const getDateString = () => {
@@ -79,7 +88,7 @@ const getDateString = () => {
     const month = pad(date.getMonth() + 1, 2);
     const day = pad(date.getDate(), 2);
 
-    return `${date.getFullYear()}-${month}-${day}`;
+    return `${date.getFullYear()}${month}${day}`;
 }
 
 module.exports.load = loadConfiguration;
