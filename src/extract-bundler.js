@@ -5,14 +5,17 @@ const axios = require('axios');
 const unzip = require('unzip-stream');
 const archiver = require('archiver');
 const { logInfo, logError } = require('./datadog-logging');
+const { generateS3Key } = require('./s3-key-generator');
+
 
 const config = require('./configuration').load();
 const s3 = new AWS.S3();
 
-const bundle = async ({ extractDownloadUrls, archiveFormat, uploadOptions = {} }) => {
+const bundle = async ({ extractDownloadUrls, apiVersionUrl, archiveFormat, s3Config }) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let downloadsBundle = archiver(archiveFormat);
+      const uploadOptions = await createUploadOptions({ s3Config, apiVersionUrl, archiveFormat });
+      const downloadsBundle = archiver(archiveFormat);
       const params = {
         ...uploadOptions,
         Body: downloadsBundle
@@ -34,22 +37,36 @@ const bundle = async ({ extractDownloadUrls, archiveFormat, uploadOptions = {} }
       downloadsBundle.finalize();
     }
     catch (error) {
+      console.error(error);
       reject(error);
     }
   });
 }
 
+const createUploadOptions = async ({ s3Config, apiVersionUrl, archiveFormat }) => {
+  const key = await generateS3Key({
+    destinationPath: s3Config.destinationPath, 
+    keyNameTemplate: s3Config.keyNameTemplate, 
+    versionUrl: apiVersionUrl,
+    archiveFormat
+  });
+
+  return {
+    Bucket: s3Config.bucket,
+    Key: key
+  };
+}
+
 const populateBundle = async (downloadsBundle, extractDownloadUrls = []) => {
-  for (var i = 0; i < extractDownloadUrls.length; i++) {
-    let url = extractDownloadUrls[i];
+  for (const url of extractDownloadUrls) {
     try {
       logInfo('Start streaming extract content', { url })
-      let response = await axios({
+      const response = await axios({
         method: 'get',
         url: url,
         responseType: 'stream'
       });
-      await appendDownload(downloadsBundle, { downloadNumber: i + 1, ...response });
+      await appendDownload(downloadsBundle, response);
       logInfo('Extract added to bundle', { url })
     } catch (error) {
       throw {
@@ -60,7 +77,7 @@ const populateBundle = async (downloadsBundle, extractDownloadUrls = []) => {
   }
 }
 
-const appendDownload = async (archive, { downloadNumber, data, headers }) => {
+const appendDownload = async (archive, { data, headers }) => {
   return new Promise((resolve, reject) => {
     let downloadName = headers['content-disposition'].match(/filename=(.+)\.zip;/i)[1];
     downloadName = downloadName.replace(/-\d{1,4}-\d{1,2}-\d{1,4}$/, '');
@@ -69,7 +86,7 @@ const appendDownload = async (archive, { downloadNumber, data, headers }) => {
       .on('error', error => { reject(error); })
       .pipe(unzip.Parse())
         .on('entry', async entry => {
-          let name = entry.path;
+          const name = entry.path;
           logInfo('Streaming file to bundle', { name });
           archive.append(entry, { name });
         });
