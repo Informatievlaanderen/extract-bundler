@@ -4,8 +4,7 @@ const { logInfo, logError } = require('./datadog-logging');
 const axios = require('axios');
 
 const generateKey = async ({ destinationPath, keyNameTemplate, archiveFormat, versionUrl }) => {
-    
-    if (destinationPath.length > 0){
+    if (destinationPath.length > 0) {
         destinationPath = `${destinationPath}/`.replace(/\/\//g, '/');
     }
     
@@ -31,6 +30,7 @@ const resolve = async ( { keyNameTemplate = '', parameters = [] }) => {
             keyName = keyName.replace(parameterRegex, parameterValue);
         }    
     }
+
     return keyName;
 }
 
@@ -39,15 +39,14 @@ const getApiVersion = async url => {
     const { status = 'unknown', data = {} } = await axios.get(url);
     const { version = unknownVersion } = data;
 
-    if (version === unknownVersion)
+    if (version === unknownVersion) {
         logError(`Unable to retrieve API version, set '${unknownVersion}'` , { requestUrl: url, status, response: data });
-
+    }
+  
     return version;
 }
 
 const getDateString = async () => {
-
-
     const date = new Date();
     const month = leftPad(date.getMonth() + 1, 2);
     const day = leftPad(date.getDate(), 2);
@@ -59,4 +58,5 @@ const leftPad = (value, length) => {
     const padded = value.toString();
     return padded.length < length ? leftPad('0' + padded, length) : padded;
 }
+
 module.exports.generateS3Key = generateKey;
