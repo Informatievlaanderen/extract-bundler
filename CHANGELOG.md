@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/informatievlaanderen/extract-bundler/compare/v1.2.0...v1.3.0) (2020-06-03)
+
+
+### Features
+
+* retrieve version from api ([6c642f6](https://github.com/informatievlaanderen/extract-bundler/commit/6c642f6ced3c9c4429c4f5d8673bb58b02149621))
+
 # [1.2.0](https://github.com/informatievlaanderen/extract-bundler/compare/v1.1.7...v1.2.0) (2020-05-29)
 
 
