@@ -1,3 +1,24 @@
+# [2.0.0](https://github.com/informatievlaanderen/extract-bundler/compare/v1.3.0...v2.0.0) (2022-03-30)
+
+
+### Bug Fixes
+
+* add Test to ECR ([5d4785b](https://github.com/informatievlaanderen/extract-bundler/commit/5d4785ba10bdcfd6d8be89ebcac55388323a4477))
+* remove ridingwolf, collaboration ended ([c77b9a3](https://github.com/informatievlaanderen/extract-bundler/commit/c77b9a38d990244607372cf781e1e7a945122aab))
+* remove set-env usage in gh-actions ([f035a66](https://github.com/informatievlaanderen/extract-bundler/commit/f035a66e7e7d63c64d23a5b0cd014912b2635a25))
+* set correct release branches ([17720e2](https://github.com/informatievlaanderen/extract-bundler/commit/17720e2f7b0a2204c08be1852ae1de7ad21ef30f))
+* update CI on main push instead of master ([888e988](https://github.com/informatievlaanderen/extract-bundler/commit/888e98816e10ea541aee91799066bc0e08b0e01e))
+
+
+### Features
+
+* move to dotnet 6.0.3 ([5a3a7d1](https://github.com/informatievlaanderen/extract-bundler/commit/5a3a7d106ab72a52f7337de1020cddd97772faf0))
+
+
+### BREAKING CHANGES
+
+* move to dotnet 6.0.3
+
 # [1.3.0](https://github.com/informatievlaanderen/extract-bundler/compare/v1.2.0...v1.3.0) (2020-06-03)
 
 
