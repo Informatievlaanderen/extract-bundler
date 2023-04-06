@@ -102,9 +102,10 @@ const appendDownload = async (archive, { data, headers }) => {
 //bundlestreetname
 
 bundle(streetNameConfig)
-  .then(result => { logInfo('Finished uploading streetname extract bundle', result); })
+  .then(result => {
+    logInfo('Finished uploading streetname extract bundle', result);
+    bundle(config)
+      .then(result => { logInfo('Finished uploading extract bundle', result); })
+      .catch(error => { logError('Failed to upload extract bundle', { bundleConfiguration: config, exception: error }); });
+  })
   .catch(error => { logError('Failed to upload streetname extract bundle', { bundleConfiguration: streetNameConfig, exception: error }); });
-
-bundle(config)
-  .then(result => { logInfo('Finished uploading extract bundle', result); })
-  .catch(error => { logError('Failed to upload extract bundle', { bundleConfiguration: config, exception: error }); });
