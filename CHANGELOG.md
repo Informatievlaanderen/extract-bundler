@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/informatievlaanderen/extract-bundler/compare/v2.1.0...v2.1.1) (2023-04-06)
+
+
+### Bug Fixes
+
+* bundle in series ([b59ac30](https://github.com/informatievlaanderen/extract-bundler/commit/b59ac3043585c73ab66eb2d6edf0119f93f8f202))
+
 # [2.1.0](https://github.com/informatievlaanderen/extract-bundler/compare/v2.0.0...v2.1.0) (2023-04-06)
 
 
