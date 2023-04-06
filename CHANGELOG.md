@@ -1,3 +1,10 @@
+## [2.1.2](https://github.com/informatievlaanderen/extract-bundler/compare/v2.1.1...v2.1.2) (2023-04-06)
+
+
+### Bug Fixes
+
+* make config contract consistent ([80737ba](https://github.com/informatievlaanderen/extract-bundler/commit/80737baaae212e027051314c46411931e9a6c4fb))
+
 ## [2.1.1](https://github.com/informatievlaanderen/extract-bundler/compare/v2.1.0...v2.1.1) (2023-04-06)
 
 
