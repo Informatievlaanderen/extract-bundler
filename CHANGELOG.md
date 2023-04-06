@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/informatievlaanderen/extract-bundler/compare/v2.0.0...v2.1.0) (2023-04-06)
+
+
+### Features
+
+* add streetname extract ([f9bc5df](https://github.com/informatievlaanderen/extract-bundler/commit/f9bc5df0b5875317c807cd36cd8289803d8bfec4))
+
 # [2.0.0](https://github.com/informatievlaanderen/extract-bundler/compare/v1.3.0...v2.0.0) (2022-03-30)
 
 
