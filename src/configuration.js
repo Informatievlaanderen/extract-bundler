@@ -59,7 +59,7 @@ const loadEnvironmentConfig = () => {
             }
         },
         streetName: {
-            streetNameExtractDownloadUrls,
+            extractDownloadUrls: streetNameExtractDownloadUrls,
             apiVersionUrl: APIVERSIONURL,
             s3Config: {
                 bucket: S3_BUCKET,
