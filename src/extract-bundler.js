@@ -8,6 +8,8 @@ const { logInfo, logError } = require('./datadog-logging');
 const { generateS3Key } = require('./s3-key-generator');
 
 const config = require('./configuration').load();
+const streetNameConfig = require('./configuration').loadStreetName();
+
 const s3 = new AWS.S3();
 
 const bundle = async ({ extractDownloadUrls, apiVersionUrl, archiveFormat, s3Config }) => {
@@ -95,6 +97,13 @@ const appendDownload = async (archive, { data, headers }) => {
         });
   });
 }
+
+//bundleaddress
+//bundlestreetname
+
+bundle(streetNameConfig)
+  .then(result => { logInfo('Finished uploading streetname extract bundle', result); })
+  .catch(error => { logError('Failed to upload streetname extract bundle', { bundleConfiguration: streetNameConfig, exception: error }); });
 
 bundle(config)
   .then(result => { logInfo('Finished uploading extract bundle', result); })
