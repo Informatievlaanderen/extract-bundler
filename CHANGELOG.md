@@ -1,3 +1,10 @@
+## [2.1.3](https://github.com/informatievlaanderen/extract-bundler/compare/v2.1.2...v2.1.3) (2023-04-07)
+
+
+### Bug Fixes
+
+* add ContentDisposition when uploading ([37b5a38](https://github.com/informatievlaanderen/extract-bundler/commit/37b5a38d505796a79989b118314487a19cf547ab))
+
 ## [2.1.2](https://github.com/informatievlaanderen/extract-bundler/compare/v2.1.1...v2.1.2) (2023-04-06)
 
 
