@@ -16,7 +16,10 @@ const generateKey = async ({ destinationPath, keyNameTemplate, archiveFormat, ve
         ]
     });
 
-    return `${destinationPath}${keyName}.${archiveFormat}`;
+    return {
+        key: `${destinationPath}${keyName}.${archiveFormat}`,
+        fileName: `${keyName}.${archiveFormat}`
+    };
 }
 
 const resolve = async ( { keyNameTemplate = '', parameters = [] }) => {

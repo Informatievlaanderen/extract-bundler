@@ -54,7 +54,8 @@ const createUploadOptions = async ({ s3Config, apiVersionUrl, archiveFormat }) =
 
   return {
     Bucket: s3Config.bucket,
-    Key: key
+    Key: key.key,
+    ContentDisposition: `attachment; filename=${key.fileName}`
   };
 }
 
@@ -83,8 +84,8 @@ const populateBundle = async (downloadsBundle, extractDownloadUrls = []) => {
 
 const appendDownload = async (archive, { data, headers }) => {
   return new Promise((resolve, reject) => {
-    let downloadName = headers['content-disposition'].match(/filename=(.+)\.zip;/i)[1];
-    downloadName = downloadName.replace(/-\d{1,4}-\d{1,2}-\d{1,4}$/, '');
+    // let downloadName = headers['content-disposition'].match(/filename=(.+)\.zip;/i)[1];
+    // downloadName = downloadName.replace(/-\d{1,4}-\d{1,2}-\d{1,4}$/, '');
     
     data
       .on('end', () => { resolve(); })
@@ -98,8 +99,7 @@ const appendDownload = async (archive, { data, headers }) => {
   });
 }
 
-//bundleaddress
-//bundlestreetname
+//TODO: bundle address
 
 bundle(streetNameConfig)
   .then(result => {
