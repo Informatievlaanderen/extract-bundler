@@ -9,6 +9,7 @@ const { generateS3Key } = require('./s3-key-generator');
 
 const config = require('./configuration').load();
 const streetNameConfig = require('./configuration').loadStreetName();
+const addressConfig = require('./configuration').loadAddress();
 
 const s3 = new AWS.S3();
 
@@ -84,9 +85,6 @@ const populateBundle = async (downloadsBundle, extractDownloadUrls = []) => {
 
 const appendDownload = async (archive, { data, headers }) => {
   return new Promise((resolve, reject) => {
-    // let downloadName = headers['content-disposition'].match(/filename=(.+)\.zip;/i)[1];
-    // downloadName = downloadName.replace(/-\d{1,4}-\d{1,2}-\d{1,4}$/, '');
-    
     data
       .on('end', () => { resolve(); })
       .on('error', error => { reject(error); })
@@ -99,13 +97,16 @@ const appendDownload = async (archive, { data, headers }) => {
   });
 }
 
-//TODO: bundle address
-
-bundle(streetNameConfig)
+bundle(addressConfig)
   .then(result => {
-    logInfo('Finished uploading streetname extract bundle', result);
-    bundle(config)
-      .then(result => { logInfo('Finished uploading extract bundle', result); })
-      .catch(error => { logError('Failed to upload extract bundle', { bundleConfiguration: config, exception: error }); });
+    logInfo('Finished uploading address extract bundle', result);
+    bundle(streetNameConfig)
+      .then(result => {
+        logInfo('Finished uploading streetname extract bundle', result);
+        bundle(config)
+          .then(result => { logInfo('Finished uploading extract bundle', result); })
+          .catch(error => { logError('Failed to upload extract bundle', { bundleConfiguration: config, exception: error }); });
+      })
+      .catch(error => { logError('Failed to upload streetname extract bundle', { bundleConfiguration: streetNameConfig, exception: error }); });
   })
-  .catch(error => { logError('Failed to upload streetname extract bundle', { bundleConfiguration: streetNameConfig, exception: error }); });
+  .catch(error => { logError('Failed to upload address extract bundle', { bundleConfiguration: addressConfig, exception: error }); });
