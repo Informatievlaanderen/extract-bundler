@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/informatievlaanderen/extract-bundler/compare/v2.1.3...v2.2.0) (2023-04-07)
+
+
+### Features
+
+* add address bundler ([405e805](https://github.com/informatievlaanderen/extract-bundler/commit/405e8057a8bd54897f148a494b014b0da150a9f7))
+
 ## [2.1.3](https://github.com/informatievlaanderen/extract-bundler/compare/v2.1.2...v2.1.3) (2023-04-07)
 
 
