@@ -1,3 +1,10 @@
+## [2.2.1](https://github.com/informatievlaanderen/extract-bundler/compare/v2.2.0...v2.2.1) (2023-04-08)
+
+
+### Bug Fixes
+
+* add timer for flushing files to upload ([c422338](https://github.com/informatievlaanderen/extract-bundler/commit/c422338a47b9f7397462f96af6a0e1976a133474))
+
 # [2.2.0](https://github.com/informatievlaanderen/extract-bundler/compare/v2.1.3...v2.2.0) (2023-04-07)
 
 
