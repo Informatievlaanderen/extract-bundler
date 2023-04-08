@@ -36,6 +36,7 @@ const bundle = async ({ extractDownloadUrls, apiVersionUrl, archiveFormat, s3Con
       })
 
       await populateBundle(downloadsBundle, extractDownloadUrls);
+      await new Promise(r => setTimeout(r, 5000)); //give some time before finalizing download (flush)
       downloadsBundle.finalize();
     }
     catch (error) {
