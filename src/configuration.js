@@ -21,17 +21,26 @@ const loadConfigurationAddress = () => {
     };
 }
 
+const loadConfigurationAddressLinks = () => {
+    return {
+        ...loadEnvironmentConfig().addresslinks,
+        archiveFormat: 'zip',
+    };
+}
+
 const loadEnvironmentConfig = () => {
     const {
         EXTRACTDOWNLOADURLS = '',
         STREETNAMEEXTRACTDOWNLOADURLS = '',
         ADDRESSEXTRACTDOWNLOADURLS = '',
+        ADDRESSLINKSEXTRACTDOWNLOADURLS = '',
         APIVERSIONURL,
         S3_BUCKET,
         S3_DESTINATIONPATH = '',
         BUNDLENAME,
         STREETNAMEBUNDLENAME,
-        ADDRESSBUNDLENAME
+        ADDRESSBUNDLENAME,
+        ADDRESSLINKSBUNDLENAME
     } = process.env;
 
     const extractDownloadUrls = EXTRACTDOWNLOADURLS
@@ -49,12 +58,20 @@ const loadEnvironmentConfig = () => {
         .map(url => url.trim())
         .filter(url => url);
 
+
+    const addresslinksExtractDownloadUrls = ADDRESSLINKSEXTRACTDOWNLOADURLS
+        .split(',')
+        .map(url => url.trim())
+        .filter(url => url);
+
     if (extractDownloadUrls.length === 0)
         throwConfigurationException('EXTRACTDOWNLOADURLS');
     if (streetNameExtractDownloadUrls.length === 0)
         throwConfigurationException('STREETNAMEEXTRACTDOWNLOADURLS');
     if (addressExtractDownloadUrls.length === 0)
         throwConfigurationException('ADDRESSEXTRACTDOWNLOADURLS');
+    if (addresslinksExtractDownloadUrls.length === 0)
+        throwConfigurationException('ADDRESSLINKSEXTRACTDOWNLOADURLS');
     if (!APIVERSIONURL)
         throwConfigurationException("APIVERSIONURL");
     if (!S3_BUCKET)
@@ -65,6 +82,8 @@ const loadEnvironmentConfig = () => {
         throwConfigurationException('STREETNAMEBUNDLENAME');
     if (!ADDRESSBUNDLENAME)
         throwConfigurationException('ADDRESSBUNDLENAME');
+    if (!ADDRESSLINKSBUNDLENAME)
+        throwConfigurationException('ADDRESSLINKSBUNDLENAME');
 
     return {
         full: {
@@ -93,6 +112,15 @@ const loadEnvironmentConfig = () => {
                 destinationPath: S3_DESTINATIONPATH,
                 keyNameTemplate: ADDRESSBUNDLENAME
             }
+        },
+        addresslinks: {
+            extractDownloadUrls: addresslinksExtractDownloadUrls,
+            apiVersionUrl: APIVERSIONURL,
+            s3Config: {
+                bucket: S3_BUCKET,
+                destinationPath: S3_DESTINATIONPATH,
+                keyNameTemplate: ADDRESSLINKSBUNDLENAME
+            }
         }
     };
 }
@@ -103,12 +131,14 @@ const throwConfigurationException = variableName => {
     + '\n EXTRACTDOWNLOADURLS : string containing a comma separated list of download urls'
     + '\n STREETNAMEEXTRACTDOWNLOADURLS : string containing a comma separated list of download urls for streetname'
     + '\n ADDRESSEXTRACTDOWNLOADURLS : string containing a comma separated list of download urls for address'
+    + '\n ADDRESSLINKSEXTRACTDOWNLOADURLS : string containing a comma separated list of download urls for addresslinks'
     + '\n APIVERSIONURL : current api version url'
     + '\n S3_BUCKET : S3 bucket name'
     + '\n S3_DESTINATIONPATH : optional, prefix for the uploaded bundle'
     + '\n BUNDLENAME : name of bundle supporting the following placeholders:'
     + '\n STREETNAMEBUNDLENAME : name of streetname bundle supporting the following placeholders:'
     + '\n ADDRESSBUNDLENAME : name of address bundle supporting the following placeholders:'
+    + '\n ADDRESSLINKSBUNDLENAME : name of addresslinks bundle supporting the following placeholders:'
     + '\n - [VERSION] : API version'
     + '\n - [DATE] : date formated as yyyyMMdd';
 }
@@ -116,3 +146,4 @@ const throwConfigurationException = variableName => {
 module.exports.load = loadConfiguration;
 module.exports.loadStreetName = loadConfigurationStreetName;
 module.exports.loadAddress = loadConfigurationAddress;
+module.exports.loadAddressLinks = loadConfigurationAddressLinks;

@@ -10,6 +10,7 @@ const { generateS3Key } = require('./s3-key-generator');
 const config = require('./configuration').load();
 const streetNameConfig = require('./configuration').loadStreetName();
 const addressConfig = require('./configuration').loadAddress();
+const addressLinksConfig = require('./configuration').loadAddressLinks();
 
 const s3 = new AWS.S3();
 
@@ -98,16 +99,24 @@ const appendDownload = async (archive, { data, headers }) => {
   });
 }
 
+// files from address stream into addresslinks
+// files from addresslinks + streetname stream into full extract
+
 bundle(addressConfig)
   .then(result => {
     logInfo('Finished uploading address extract bundle', result);
-    bundle(streetNameConfig)
+    bundle(addressLinksConfig)
       .then(result => {
-        logInfo('Finished uploading streetname extract bundle', result);
-        bundle(config)
-          .then(result => { logInfo('Finished uploading extract bundle', result); })
-          .catch(error => { logError('Failed to upload extract bundle', { bundleConfiguration: config, exception: error }); });
+        logInfo('Finished uploading addresslinks extract bundle', result);
+        bundle(streetNameConfig)
+          .then(result => {
+            logInfo('Finished uploading streetname extract bundle', result);
+            bundle(config)
+              .then(result => { logInfo('Finished uploading extract bundle', result); })
+              .catch(error => { logError('Failed to upload extract bundle', { bundleConfiguration: config, exception: error }); });
+          })
+          .catch(error => { logError('Failed to upload streetname extract bundle', { bundleConfiguration: streetNameConfig, exception: error }); });
       })
-      .catch(error => { logError('Failed to upload streetname extract bundle', { bundleConfiguration: streetNameConfig, exception: error }); });
+      .catch(error => { logError('Failed to upload addresslinks extract bundle', { bundleConfiguration: addressLinksConfig, exception: error }); });
   })
   .catch(error => { logError('Failed to upload address extract bundle', { bundleConfiguration: addressConfig, exception: error }); });
