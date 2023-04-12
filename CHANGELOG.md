@@ -1,3 +1,10 @@
+# [2.3.0](https://github.com/informatievlaanderen/extract-bundler/compare/v2.2.1...v2.3.0) (2023-04-12)
+
+
+### Features
+
+* add addresslinks extract ([1dc66b7](https://github.com/informatievlaanderen/extract-bundler/commit/1dc66b734364807df12cc556378103431b67ebf3))
+
 ## [2.2.1](https://github.com/informatievlaanderen/extract-bundler/compare/v2.2.0...v2.2.1) (2023-04-08)
 
 
