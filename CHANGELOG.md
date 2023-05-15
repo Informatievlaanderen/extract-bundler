@@ -1,3 +1,10 @@
+# [2.4.0](https://github.com/informatievlaanderen/extract-bundler/compare/v2.3.0...v2.4.0) (2023-05-15)
+
+
+### Features
+
+* add newprd ci/cd ([d60d1a2](https://github.com/informatievlaanderen/extract-bundler/commit/d60d1a25992dd6304c277156eff0b3c022a2ead0))
+
 # [2.3.0](https://github.com/informatievlaanderen/extract-bundler/compare/v2.2.1...v2.3.0) (2023-04-12)
 
 
