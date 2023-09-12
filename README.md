@@ -35,8 +35,12 @@ Combines multiple extract files into one and puts them on S3 in a streaming mann
 
 ### Libraries
 
+* [Archiver](https://www.archiverjs.com/) - _A streaming interface for archive generation._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [AWS-SDK](https://aws.amazon.com/developer/language/javascript/) - _AWS SDK for JavaScript in the browser and Node.js._ - [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/)
+* [Axios](https://axios-http.com) - _Promise based HTTP client for the browser and node.js._ - [MIT](https://choosealicense.com/licenses/mit/)
 * [Paket](https://fsprojects.github.io/Paket/license.html) - _A dependency manager for .NET with support for NuGet packages and Git repositories._ - [MIT](https://choosealicense.com/licenses/mit/)
 * [FAKE](https://github.com/fsharp/FAKE/blob/release/next/License.txt) - _"FAKE - F# Make" is a cross platform build automation system._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [Unzip stream](https://github.com/mhr3/unzip-stream) - _Node.js cross-platform unzip using streams._ - [MIT](https://choosealicense.com/licenses/mit/)
 
 ### Tooling
 
