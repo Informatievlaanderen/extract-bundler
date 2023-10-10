@@ -1,0 +1,13 @@
+{
+    "request": {
+        "method": "GET",
+        "urlPattern": "/metadatacenter/srv/api/records/[^/]+/formatters/xsl-view-default\\?output=pdf&language=dut&approved=true"
+    },
+    "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/pdf"
+        },
+        "bodyFileName": "Meta_GRARStraatnamen.pdf"
+      }
+}
