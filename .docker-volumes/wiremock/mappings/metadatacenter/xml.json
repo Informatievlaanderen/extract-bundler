@@ -1,0 +1,13 @@
+{
+    "request": {
+        "method": "GET",
+        "urlPattern": "/metadatacenter/srv/api/records/[^/]+/formatters/xml"
+    },
+    "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "text/xml"
+        },
+        "bodyFileName": "Meta_GRARStraatnamen.xml"
+      }
+}

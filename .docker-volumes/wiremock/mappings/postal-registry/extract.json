@@ -1,0 +1,13 @@
+{
+    "request": {
+        "method": "GET",
+        "url": "/v1/extract"
+    },
+    "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/zip"
+        },
+        "bodyFileName": "Postinfo-2023-10-15.zip"
+      }
+}
