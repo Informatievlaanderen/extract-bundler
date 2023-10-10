@@ -3,6 +3,7 @@
 .idea/
 .ionide/
 .paket/
+appsettings.*.json
 
 [Pp]ackages/
 [Pp]aket-files/
@@ -39,3 +40,8 @@ ehthumbs.db
 Icon?
 Thumbs.db
 
+.docker-volumes/minio/data/.minio.sys
+.docker-volumes/minio/data/basisregisters-test-extracts/*
+.docker-volumes/minio/data/basisregisters-staging-extracts/*
+!.docker-volumes/minio/data/basisregisters-test-extracts/.gitkeep
+!.docker-volumes/minio/data/basisregisters-staging-extracts/.gitkeep

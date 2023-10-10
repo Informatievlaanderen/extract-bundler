@@ -1,0 +1,8 @@
+Microsoft.NET.Test.Sdk
+xunit.runner.visualstudio
+xunit.categories
+FluentAssertions
+Microsoft.AspNetCore.TestHost
+Autofac
+
+Be.Vlaanderen.Basisregisters.DockerUtilities
