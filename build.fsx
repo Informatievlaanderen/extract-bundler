@@ -60,7 +60,7 @@ Target.create "Publish_Solution" (fun _ ->
     "ExtractBundler.Console"
   ] |> List.iter publishSource)
 
-Target.create "Containerize_ExtractBundler" (fun _ -> containerize "ExtractBundler.Console" "extract-bundler")
+Target.create "Containerize_ExtractBundlerConsole" (fun _ -> containerize "ExtractBundler.Console" "extract-bundler")
 
 Target.create "SetAssemblyVersions" (fun _ -> setVersions "SolutionInfo.cs")
 // --------------------------------------------------------------------------------
