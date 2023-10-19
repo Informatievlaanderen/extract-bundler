@@ -1,6 +1,6 @@
 {
   "name": "extract-bundler",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Combines multiple extract files into one and puts them on S3 & Azure Blob.",
   "author": "Basisregisters Vlaanderen",
   "license": "MIT",
@@ -93,7 +93,7 @@
         ]
       }
     },
-    "generateNotes":[
+    "generateNotes": [
       {
         "path": "@semantic-release/exec",
         "cmd": "echo ${nextRelease.version} > semver"
@@ -143,7 +143,8 @@
             "path": "dist/**/*.nupkg"
           }
         ]
-      }],
+      }
+    ],
     "success": [
       "@semantic-release/github"
     ],

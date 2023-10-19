@@ -1,3 +1,23 @@
+# [2.5.0](https://github.com/informatievlaanderen/extract-bundler/compare/v2.4.0...v2.5.0) (2023-10-19)
+
+
+### Bug Fixes
+
+* build ([8c1add5](https://github.com/informatievlaanderen/extract-bundler/commit/8c1add54929ac449dffa1bd5022e4e78448f982c))
+* build ([e044efe](https://github.com/informatievlaanderen/extract-bundler/commit/e044efe7ca94677d1f1e99ff38a9409972705587))
+* build ([094f18e](https://github.com/informatievlaanderen/extract-bundler/commit/094f18e41323770d6c356ba42940fab18f81e5cd))
+* build ([5076891](https://github.com/informatievlaanderen/extract-bundler/commit/507689173a5044c3acbb63339d77dca77cbaecd4))
+* build ([c258529](https://github.com/informatievlaanderen/extract-bundler/commit/c258529206dd964e7dfb4b94884ff21e206b6dc3))
+* build ([f6b8b65](https://github.com/informatievlaanderen/extract-bundler/commit/f6b8b65e86fdcfc153fe594c9387c594ad3801f8))
+* build ([fa33dd8](https://github.com/informatievlaanderen/extract-bundler/commit/fa33dd83230ffd21b603d82201814991ca070c48))
+* build ([815a2a6](https://github.com/informatievlaanderen/extract-bundler/commit/815a2a6475a008b356283d8c73db5eafe8245a03))
+* build ([0809a60](https://github.com/informatievlaanderen/extract-bundler/commit/0809a60e2b02a394d2dac1be994dcd1ddad114cd))
+
+
+### Features
+
+* rewrite sln in c# & upload extract to azure ([1ce980d](https://github.com/informatievlaanderen/extract-bundler/commit/1ce980dc0b4cda74b683ca133e0fe6598be7826f))
+
 # [2.4.0](https://github.com/informatievlaanderen/extract-bundler/compare/v2.3.0...v2.4.0) (2023-05-15)
 
 
