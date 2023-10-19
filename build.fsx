@@ -74,7 +74,6 @@ Target.create "SetAssemblyVersions" (fun _ -> setVersions "SolutionInfo.cs")
 Target.create "Build" ignore
 Target.create "Test" ignore
 Target.create "Publish" ignore
-Target.create "Containerize" ignore
 
 "NpmInstall"
   ==> "DotNetCli"
