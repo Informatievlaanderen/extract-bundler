@@ -19,26 +19,6 @@ jobs:
       with:
           persist-credentials: false
 
-    - name: Remove old docker containers
-      run: docker container ls -a --filter "name=extractbundler*" --format "{{.ID}}" | awk 'NR>1' | xargs --no-run-if-empty docker container rm
-      shell: bash
-
-    - name: Remove old docker volumes
-      run: docker volume ls | grep extract-bundler | awk '{print $2}' | xargs --no-run-if-empty docker volume rm || true
-      shell: bash
-
-    - name: Remove ol docker network
-      run: docker network ls | grep extract-bundler | awk 'NR>0 {print $2}' | xargs --no-run-if-empty docker network rm || true
-      shell: bash
-
-    # need checkout before using compose-action
-    # only available for Test
-    # Docs https://github.com/marketplace/actions/docker-compose-action
-    - name: docker-compose
-      uses: isbang/compose-action@v1.5.1
-      with:
-        compose-file: "./docker-compose.yml"
-
     - name: Setup Node.js
       uses: actions/setup-node@v3.5.1
 
@@ -74,19 +54,44 @@ jobs:
       shell: bash
   
   build-extract-bundler:
-    name: Build Extract Bundler
-    uses: Informatievlaanderen/build-pipeline/.github/workflows/build-image.yml@main
-    needs: [ set-release-version ]
-    if: ${{ (github.repository_owner == 'Informatievlaanderen') && (needs.set-release-version.outputs.version != 'none') }}
-    with:
-      registry: public-api
-      build-target: Containerize_ExtractBundlerConsole
-      image-file: extract-bundler-image.tar
-      image-name: extract-bundler
-      test-project: ExtractBundler.IntegrationTests
-      build-project: ExtractBundler.Console
-      semver: ${{ needs.set-release-version.outputs.version }}
-    secrets: inherit
+    name: Build
+    needs: [ 
+      set-release-version
+    ]
+    outputs:
+      build-extract-bundler:
+
+    runs-on: ubuntu-latest
+    steps:
+    - name: Remove old docker containers
+      run: docker container ls -a --filter "name=extractbundler*" --format "{{.ID}}" | awk 'NR>1' | xargs --no-run-if-empty docker container rm
+      shell: bash
+
+    - name: Remove old docker volumes
+      run: docker volume ls | grep extract-bundler | awk '{print $2}' | xargs --no-run-if-empty docker volume rm || true
+      shell: bash
+
+    - name: Remove ol docker network
+      run: docker network ls | grep extract-bundler | awk 'NR>0 {print $2}' | xargs --no-run-if-empty docker network rm || true
+      shell: bash
+
+    - name: docker-compose
+      uses: isbang/compose-action@v1.5.1
+      with:
+        compose-file: "./docker-compose.yml"
+
+    - name: Build Extract Bundler
+      uses: Informatievlaanderen/build-pipeline/.github/workflows/build-image.yml@main
+      if: ${{ (github.repository_owner == 'Informatievlaanderen') && (needs.set-release-version.outputs.version != 'none') }}
+      with:
+        registry: public-api
+        build-target: Containerize_ExtractBundlerConsole
+        image-file: extract-bundler-image.tar
+        image-name: extract-bundler
+        test-project: ExtractBundler.IntegrationTests
+        build-project: ExtractBundler.Console
+        semver: ${{ needs.set-release-version.outputs.version }}
+        secrets: inherit
 
   release:
     if: ${{ (github.repository_owner == 'Informatievlaanderen') && (needs.set-release-version.outputs.version != 'none') }}
