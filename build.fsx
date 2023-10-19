@@ -60,6 +60,12 @@ Target.create "Publish_Solution" (fun _ ->
     "ExtractBundler.Console"
   ] |> List.iter publishSource)
 
+type ContainerObject = { Project: string; Container: string }
+
+Target.create "Containerize" (fun _ ->
+  [|{ Project = "ExtractBundler.Console"; Container = "extract-bundler" }
+  |] |> Array.Parallel.iter (fun o -> containerize o.Project o.Container))
+
 Target.create "Containerize_ExtractBundlerConsole" (fun _ -> containerize "ExtractBundler.Console" "extract-bundler")
 
 Target.create "SetAssemblyVersions" (fun _ -> setVersions "SolutionInfo.cs")
