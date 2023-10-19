@@ -2,7 +2,9 @@ namespace ExtractBundler.Console.Bundlers;
 
 using CloudStorageClients;
 using HttpClients;
+using Infrastructure.Configurations;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 public class FullBundler : BaseBundler<FullBundler>
 {
@@ -11,9 +13,9 @@ public class FullBundler : BaseBundler<FullBundler>
         MetaDataCenterHttpClient metadataClient,
         S3Client s3Client,
         AzureBlobClient azureBlobClient,
-        ILoggerFactory loggerFactory)
-        : base(extractDownloader, metadataClient, s3Client, azureBlobClient,
-            loggerFactory)
+        ILoggerFactory loggerFactory,
+        IOptions<AzureBlobOptions> azureOptions)
+        : base(extractDownloader, metadataClient, s3Client, azureBlobClient, loggerFactory, azureOptions)
     {
         Identifier = Identifier.Full;
         RequiredZipArchives.AddRange(new[]

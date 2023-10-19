@@ -10,4 +10,5 @@ public class AzureBlobOptions
     public string ConnectionString { get; set; }
     public bool IsTest { get; set; }
     public bool IsAzurite { get; set; }
+    public bool Enabled { get; set; }
 }
