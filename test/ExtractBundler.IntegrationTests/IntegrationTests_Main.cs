@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac.Core;
 using Console.Bundlers;
 using Console.CloudStorageClients;
 using Console.Infrastructure.Configurations;
@@ -48,6 +49,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
         await Task.WhenAll(_streetNameBundler.Start(), _addressBundler.Start(), _addressLinksBundler.Start());
 
         //Assert
+
         await Assert_AddressBundler_Should_UploadToS3AndAzure();
         await Assert_AddressLinksBundler_Should_UploadToS3AndAzure();
         await Assert_StreetNameBundler_Should_UploadToS3AndAzure();
@@ -155,7 +157,6 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
         var list = await _azureBlobClient.ListBlobsAsync();
         var expectedBlobName = _azureOptions.IsTest ? "31087/GRAR_Adressen.zip" : "10143/GRAR_Adressen.zip";
         var blobName = list.FirstOrDefault(i => i.Item1 == expectedBlobName)?.Item1;
-        Assert.NotNull(blobName);
         blobName.Should().NotBeNull();
 
         var azureZipAsBytes = await _azureBlobClient.DownloadBlobAsync(blobName!);
