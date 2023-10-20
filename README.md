@@ -1,10 +1,9 @@
-# extract-bundler [![Build Status](https://github.com/Informatievlaanderen/extract-bundler/workflows/CI/badge.svg)](https://github.com/Informatievlaanderen/extract-bundler/actions)
-
-Combines multiple extract files into one and puts them on S3 in a streaming manner.
+# extract-bundler [![Build Status](https://github.com/Informatievlaanderen/extract-bundler/workflows/Build/badge.svg)](https://github.com/Informatievlaanderen/extract-bundler/actions)
 
 ## Goal
 
-> Download multiple extract files and provide them as a combined file to users.
+> Download multiple extract files and provide them as a combined file to users.  
+> (Optional) send them to metadata (csw) service and upload them to azure.
 
 ## Quick contributing guide
 
@@ -17,7 +16,9 @@ Combines multiple extract files into one and puts them on S3 in a streaming mann
 
 ## License
 
-[Massachusetts Institute of Technology (MIT)](https://choosealicense.com/licenses/mit/)
+[European Union Public Licence (EUPL)](https://joinup.ec.europa.eu/news/understanding-eupl-v12)
+
+The new version 1.2 of the European Union Public Licence (EUPL) is published in the 23 EU languages in the EU Official Journal: [Commission Implementing Decision (EU) 2017/863 of 18 May 2017 updating the open source software licence EUPL to further facilitate the sharing and reuse of software developed by public administrations](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.L_.2017.128.01.0059.01.ENG&toc=OJ:L:2017:128:FULL) ([OJ 19/05/2017 L128 p. 59–64](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.L_.2017.128.01.0059.01.ENG&toc=OJ:L:2017:128:FULL)).
 
 ## Credits
 
@@ -32,15 +33,21 @@ Combines multiple extract files into one and puts them on S3 in a streaming mann
 * [Roslyn and C#](https://github.com/dotnet/roslyn/blob/master/License.txt) - _The Roslyn .NET compiler provides C# and Visual Basic languages with rich code analysis APIs._ - [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/)
 * [F#](https://github.com/fsharp/fsharp/blob/master/LICENSE) - _The F# Compiler, Core Library & Tools_ - [MIT](https://choosealicense.com/licenses/mit/)
 * [F# and .NET Core](https://github.com/dotnet/netcorecli-fsc/blob/master/LICENSE) - _F# and .NET Core SDK working together._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [ASP.NET Core framework](https://github.com/aspnet/AspNetCore/blob/master/LICENSE.txt) - _ASP.NET Core is a cross-platform .NET framework for building modern cloud-based web applications on Windows, Mac, or Linux._ - [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/)
 
 ### Libraries
 
-* [Archiver](https://www.archiverjs.com/) - _A streaming interface for archive generation._ - [MIT](https://choosealicense.com/licenses/mit/)
-* [AWS-SDK](https://aws.amazon.com/developer/language/javascript/) - _AWS SDK for JavaScript in the browser and Node.js._ - [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/)
-* [Axios](https://axios-http.com) - _Promise based HTTP client for the browser and node.js._ - [MIT](https://choosealicense.com/licenses/mit/)
 * [Paket](https://fsprojects.github.io/Paket/license.html) - _A dependency manager for .NET with support for NuGet packages and Git repositories._ - [MIT](https://choosealicense.com/licenses/mit/)
 * [FAKE](https://github.com/fsharp/FAKE/blob/release/next/License.txt) - _"FAKE - F# Make" is a cross platform build automation system._ - [MIT](https://choosealicense.com/licenses/mit/)
-* [Unzip stream](https://github.com/mhr3/unzip-stream) - _Node.js cross-platform unzip using streams._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [Structurizr](https://github.com/structurizr/dotnet/blob/master/LICENSE) - _Visualise, document and explore your software architecture._ - [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/)
+* [xUnit](https://github.com/xunit/xunit/blob/master/license.txt) - _xUnit.net is a free, open source, community-focused unit testing tool for the .NET Framework._ - [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/)
+* [Autofac](https://github.com/autofac/Autofac/blob/develop/LICENSE) - _An addictive .NET IoC container._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [AutoFixture](https://github.com/AutoFixture/AutoFixture/blob/master/LICENCE.txt) - _AutoFixture is an open source library for .NET designed to minimize the 'Arrange' phase of your unit tests in order to maximize maintainability._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [FluentAssertions](https://github.com/fluentassertions/fluentassertions/blob/master/LICENSE) - _Fluent API for asserting the results of unit tests._ - [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/)
+* [Serilog](https://github.com/serilog/serilog/blob/dev/LICENSE) - _Simple .NET logging with fully-structured events._ - [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/)
+* [Moq](https://github.com/devlooped/moq) - _The most popular and friendly mocking framework for .NET._ - [BSD](https://choosealicense.com/licenses/bsd-3-clause/)
+* [AWSSDK](https://github.com/aws/aws-sdk-net) - _The official AWS SDK for .NET._ - [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/)
+* [Azure](https://github.com/Azure/azure-sdk-for-net/tree/main) - _This repository is for active development of the Azure SDK for .NET._ - [MIT](https://choosealicense.com/licenses/mit/)
 
 ### Tooling
 
@@ -60,3 +67,6 @@ Combines multiple extract files into one and puts them on S3 in a streaming mann
 ### Flemish Government Libraries
 
 * [Be.Vlaanderen.Basisregisters.Build.Pipeline](https://github.com/informatievlaanderen/build-pipeline/blob/master/LICENSE) - _Contains generic files for all Basisregisters pipelines._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [Be.Vlaanderen.Basisregisters.DataDog](https://github.com/Informatievlaanderen/datadog-tracing) - _A C# Implementation of Data Dog Tracing._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [Be.Vlaanderen.Basisregisters.Aws.DistributedMutex](https://github.com/Informatievlaanderen/aws-distributed-mutex) - _A distributed lock (mutex) implementation for AWS using DynamoDB._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [Be.Vlaanderen.Basisregisters.BlobStore](https://github.com/Informatievlaanderen/blob-store) - _A blob store that provides a generic interface to blob storage._ - [EUPL-1.2](https://choosealicense.com/licenses/eupl-1.2/)

@@ -24,6 +24,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtractBundler", "src\Extra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtractBundler.IntegrationTests", "test\ExtractBundler.IntegrationTests\ExtractBundler.IntegrationTests.csproj", "{F64642BD-6B98-4964-A586-604D18D65DC2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "adr", "adr", "{FE9FDD55-4C65-42BC-BCE9-D6F5B872F097}"
+	ProjectSection(SolutionItems) = preProject
+		docs\adr\0001-record-architecture-decisions.md = docs\adr\0001-record-architecture-decisions.md
+		docs\adr\0002-rewrite-javascript-to-csharp.md = docs\adr\0002-rewrite-javascript-to-csharp.md
+	EndProjectSection
+EndProject
 
 Global
 GlobalSection(SolutionConfigurationPlatforms) = preSolution
