@@ -17,7 +17,6 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-
     - name: Remove old docker containers
       run: docker container ls -a --filter "name=extractbundler*" --format "{{.ID}}" | awk 'NR>1' | xargs --no-run-if-empty docker container rm
       shell: bash
