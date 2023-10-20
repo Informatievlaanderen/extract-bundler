@@ -1,3 +1,10 @@
+## [2.5.1](https://github.com/informatievlaanderen/extract-bundler/compare/v2.5.0...v2.5.1) (2023-10-20)
+
+
+### Bug Fixes
+
+* build trigger ([8c372af](https://github.com/informatievlaanderen/extract-bundler/commit/8c372af07c8a1770f44f5259beea686b58418e7c))
+
 # [2.5.0](https://github.com/informatievlaanderen/extract-bundler/compare/v2.4.0...v2.5.0) (2023-10-19)
 
 
