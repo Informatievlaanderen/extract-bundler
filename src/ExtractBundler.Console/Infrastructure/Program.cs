@@ -94,9 +94,10 @@ public sealed class Program
                     .AddSingleton<S3Client>()
                     .AddSingleton<AzureBlobClient>()
                     .Configure<S3Options>(hostContext.Configuration.GetSection(nameof(S3Options)))
-                    .Configure<Dictionary<string, ApiEndPointOptions>>(
-                        hostContext.Configuration.GetSection(nameof(ApiEndPointOptions)))
+                    .Configure<Dictionary<string, Dictionary<string, ApiEndPointOptionItem>>>(
+                        hostContext.Configuration.GetSection("ApiEndPointOptions"))
                     .Configure<AzureBlobOptions>(hostContext.Configuration.GetSection(nameof(AzureBlobOptions)))
+                    .Configure<BundlerEnableOptions>(hostContext.Configuration.GetSection(nameof(BundlerEnableOptions)))
                     .Configure<MetadataCenterOptions>(
                         hostContext.Configuration.GetSection(nameof(MetadataCenterOptions)));
                 services.AddHostedService<ExtractBundleProcessor>();
@@ -142,7 +143,7 @@ public sealed class Program
         }
         finally
         {
-            logger.LogInformation("Stopping...");
+            logger.LogWarning("Stopping...");
         }
     }
 }

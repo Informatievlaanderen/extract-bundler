@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,12 +15,12 @@ using Microsoft.Extensions.Options;
 public sealed class ExtractDownloader
 {
     private readonly ILogger<ExtractDownloader>? _logger;
-    private readonly Dictionary<string, ApiEndPointOptions> _apiEndPointOptions;
+    private readonly Dictionary<string, Dictionary<string, ApiEndPointOptionItem>> _apiEndPointOptions;
     private readonly Dictionary<string, ZipArchive> _zipArchives = new();
     private bool _isRunning;
 
     public ExtractDownloader(
-        IOptions<Dictionary<string, ApiEndPointOptions>> options,
+        IOptions<Dictionary<string, Dictionary<string, ApiEndPointOptionItem>>> options,
         ILoggerFactory loggerFactory)
     {
         _apiEndPointOptions = options.Value;
@@ -35,28 +36,28 @@ public sealed class ExtractDownloader
             return;
         _isRunning = true;
 
-        var tasks = new List<Task>();
+        var flattendEndpoints = _apiEndPointOptions.SelectMany(i =>
+            i.Value.ToDictionary(k => $"{i.Key}_{k.Key}", v => v.Value));
 
-        foreach (var (registry, endpoints) in _apiEndPointOptions)
+        var groupedEndpoints = flattendEndpoints
+            .Where(i => i.Value.Enabled)
+            .OrderBy(i => i.Value.PriorityGroup)
+            .GroupBy(i => i.Value.PriorityGroup)
+            .ToList();
+
+        foreach (var priorityGroup in groupedEndpoints)
         {
-            if (!string.IsNullOrWhiteSpace(endpoints.Extract))
-            {
-                tasks.Add(Download(endpoints.Extract, registry + "_Extract", cancellationToken));
-            }
+            _logger?.LogWarning($"Start download endpoint Group {priorityGroup.Key}");
 
-            if (!string.IsNullOrWhiteSpace(endpoints.Links))
-            {
-                tasks.Add(Download(endpoints.Links, registry + "_Links", cancellationToken));
-            }
+            var groupTask = priorityGroup
+                .Select(endpoint => Download(endpoint.Value.Url, endpoint.Key, cancellationToken))
+                .ToArray();
+            await Task.WhenAll(groupTask);
 
-            if (!string.IsNullOrWhiteSpace(endpoints.Crab))
-            {
-                tasks.Add(Download(endpoints.Crab, registry + "_Crab", cancellationToken));
-            }
+            _logger?.LogWarning($"Endpoint Group {priorityGroup.Key} has been downloaded");
         }
 
-        await Task.WhenAll(tasks);
-        _logger?.LogInformation("All zips have been downloaded");
+        _logger?.LogWarning("All zips have been downloaded");
     }
 
     private async Task Download(string url, string fileName, CancellationToken cancellationToken = default)
@@ -92,7 +93,7 @@ public sealed class ExtractDownloader
             if (bytesRead == 0)
             {
                 isMoreToRead = false;
-                _logger?.LogInformation($"Download Complete {fileName}.zip ({totalBytesRead.FormatBytes()})");
+                _logger?.LogWarning($"Download Complete {fileName}.zip ({totalBytesRead.FormatBytes()})");
                 continue;
             }
 
@@ -100,7 +101,7 @@ public sealed class ExtractDownloader
             totalBytesRead += bytesRead;
             ++readCount;
 
-            if (readCount % 100 == 0)
+            if (readCount % 1000 == 0) //Less aggressive logging
             {
                 _logger?.LogInformation($"Download {fileName}.zip ({totalBytesRead.FormatBytes()})");
             }
