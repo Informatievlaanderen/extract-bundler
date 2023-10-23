@@ -22,10 +22,10 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
     private readonly S3Client _s3Client;
     private readonly AzureBlobClient _azureBlobClient;
     private readonly AzureBlobOptions _azureOptions;
-    private readonly AddressBundler _addressBundler;
-    private readonly AddressLinksBundler _addressLinksBundler;
-    private readonly StreetNameBundler _streetNameBundler;
-    private readonly FullBundler _fullBundler;
+    private readonly AddressBundler addressBundler;
+    private readonly AddressLinksBundler addressLinksBundler;
+    private readonly StreetNameBundler streetNameBundler;
+    private readonly FullBundler fullBundler;
 
 
     public IntegrationTests(IntegrationTestFixture fixture)
@@ -36,17 +36,17 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
         _s3Client = _fixture.TestServer.Services.GetService<S3Client>()!;
         _azureBlobClient = _fixture.TestServer.Services.GetService<AzureBlobClient>()!;
         _azureOptions = _fixture.TestServer.Services.GetService<IOptions<AzureBlobOptions>>()!.Value;
-        _addressBundler = _fixture.TestServer.Services.GetService<AddressBundler>()!;
-        _addressLinksBundler = _fixture.TestServer.Services.GetService<AddressLinksBundler>()!;
-        _streetNameBundler = _fixture.TestServer.Services.GetService<StreetNameBundler>()!;
-        _fullBundler = _fixture.TestServer.Services.GetService<FullBundler>()!;
+        addressBundler = _fixture.TestServer.Services.GetService<AddressBundler>()!;
+        addressLinksBundler = _fixture.TestServer.Services.GetService<AddressLinksBundler>()!;
+        streetNameBundler = _fixture.TestServer.Services.GetService<StreetNameBundler>()!;
+        fullBundler = _fixture.TestServer.Services.GetService<FullBundler>()!;
     }
 
     [Fact]
     private async Task Bundler_Should_Upload_To_S3_And_Azure()
     {
         //Act
-        await Task.WhenAll(_streetNameBundler.Start(), _addressBundler.Start(), _addressLinksBundler.Start());
+        await Task.WhenAll(streetNameBundler.Start(), addressBundler.Start(), addressLinksBundler.Start(), fullBundler.Start());
 
         //Assert
 

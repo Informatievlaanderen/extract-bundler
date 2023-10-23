@@ -1,0 +1,13 @@
+{
+    "request": {
+        "method": "GET",
+        "url": "/v1/extract/straatnamen"
+    },
+    "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/zip"
+        },
+        "bodyFileName": "public-api-straatnamen.zip"
+      }
+}

@@ -1,7 +1,6 @@
 namespace ExtractBundler.Console.Infrastructure;
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Amazon;
@@ -17,12 +16,12 @@ using Bundlers;
 using CloudStorageClients;
 using Configurations;
 using Destructurama;
-using Processors;
 using HttpClients;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Processors;
 using Serilog;
 using Serilog.Debugging;
 
@@ -88,16 +87,14 @@ public sealed class Program
                     .AddScoped<AddressBundler>()
                     .AddScoped<AddressLinksBundler>()
                     .AddTransient<MetaDataCenterHttpClient>()
-                    .AddSingleton<ExtractDownloader>()
+                    .AddTransient<ExtractDownloader>()
                     .AddAmazonS3(s3Options)
                     .AddAzureBlob(azureOptions)
                     .AddSingleton<S3Client>()
                     .AddSingleton<AzureBlobClient>()
                     .Configure<S3Options>(hostContext.Configuration.GetSection(nameof(S3Options)))
-                    .Configure<Dictionary<string, Dictionary<string, ApiEndPointOptionItem>>>(
-                        hostContext.Configuration.GetSection("ApiEndPointOptions"))
                     .Configure<AzureBlobOptions>(hostContext.Configuration.GetSection(nameof(AzureBlobOptions)))
-                    .Configure<BundlerEnableOptions>(hostContext.Configuration.GetSection(nameof(BundlerEnableOptions)))
+                    .Configure<BundlerOptions>(hostContext.Configuration.GetSection(nameof(BundlerOptions)))
                     .Configure<MetadataCenterOptions>(
                         hostContext.Configuration.GetSection(nameof(MetadataCenterOptions)));
                 services.AddHostedService<ExtractBundleProcessor>();

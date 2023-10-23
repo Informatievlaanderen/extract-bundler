@@ -6,29 +6,26 @@ using Infrastructure.Configurations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-public class FullBundler : BaseBundler<FullBundler>
+public class FullBundler : BaseBundler
 {
     public FullBundler(
+        IOptions<BundlerOptions> options,
         ExtractDownloader extractDownloader,
         MetaDataCenterHttpClient metadataClient,
         S3Client s3Client,
         AzureBlobClient azureBlobClient,
         ILoggerFactory loggerFactory,
         IOptions<AzureBlobOptions> azureOptions)
-        : base(extractDownloader, metadataClient, s3Client, azureBlobClient, loggerFactory, azureOptions)
+        : base(
+            metadataClient,
+            s3Client,
+            azureBlobClient,
+            loggerFactory,
+            azureOptions,
+            extractDownloader,
+            options.Value.Full)
     {
-        Identifier = Identifier.Full;
-        RequiredZipArchives.AddRange(new[]
-        {
-            "AddressRegistry_Extract",
-            "AddressRegistry_Crab",
-            "BuildingRegistry_Extract",
-            "BuildingRegistry_Links",
-            "MunicipalityRegistry_Extract",
-            "ParcelRegistry_Extract",
-            "ParcelRegistry_Links",
-            "PostalRegistry_Extract",
-            "StreetNameRegistry_Extract"
-        });
     }
+
+    protected override Identifier GetIdentifier() => Identifier.Full;
 }

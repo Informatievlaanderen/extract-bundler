@@ -6,23 +6,26 @@ using Infrastructure.Configurations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-public class AddressLinksBundler : BaseBundler<AddressLinksBundler>
+public class AddressLinksBundler : BaseBundler
 {
     public AddressLinksBundler(
+        IOptions<BundlerOptions> options,
         ExtractDownloader extractDownloader,
         MetaDataCenterHttpClient metadataClient,
         S3Client s3Client,
         AzureBlobClient azureBlobClient,
         ILoggerFactory loggerFactory,
         IOptions<AzureBlobOptions> azureOptions)
-        : base(extractDownloader, metadataClient, s3Client, azureBlobClient, loggerFactory, azureOptions)
+        : base(
+            metadataClient,
+            s3Client,
+            azureBlobClient,
+            loggerFactory,
+            azureOptions,
+            extractDownloader,
+            options.Value.AddressLinks)
     {
-        Identifier = Identifier.AddressLinks;
-        RequiredZipArchives.AddRange(new[]
-        {
-            "AddressRegistry_Extract",
-            "BuildingRegistry_Links",
-            "ParcelRegistry_Links"
-        });
     }
+
+    protected override Identifier GetIdentifier() => Identifier.AddressLinks;
 }

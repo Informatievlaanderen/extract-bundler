@@ -1,0 +1,13 @@
+{
+    "request": {
+        "method": "GET",
+        "url": "/v1/extract/adressen"
+    },
+    "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/zip"
+        },
+        "bodyFileName": "public-api-adressen.zip"
+      }
+}
