@@ -108,7 +108,7 @@
             {
                 await foreach (var blobItem in _containerClient.GetBlobsAsync(cancellationToken: cancellationToken))
                 {
-                    _logger.LogInformation($"Blob name: {blobItem.Name}, Blob type: {blobItem.Properties.BlobType}");
+                    _logger.LogDebug($"Blob name: {blobItem.Name}, Blob type: {blobItem.Properties.BlobType}");
                     var name = blobItem.Name;
                     var type = blobItem.Properties.ContentType;
                     var size = blobItem.Properties.ContentLength;

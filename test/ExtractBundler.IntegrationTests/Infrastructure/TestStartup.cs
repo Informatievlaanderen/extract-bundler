@@ -36,8 +36,8 @@ public class TestStartup
             .AddAmazonS3(s3Options)
             .AddAzureBlob(azureOptions)
             .Configure<S3Options>(_configuration.GetSection(nameof(S3Options)))
-            .Configure<Dictionary<string, ApiEndPointOptions>>(
-                _configuration.GetSection(nameof(ApiEndPointOptions)))
+            .Configure<Dictionary<string, Dictionary<string, ApiEndPointOptionItem>>>(
+                _configuration.GetSection("ApiEndPointOptions"))
             .Configure<AzureBlobOptions>(_configuration.GetSection(nameof(AzureBlobOptions)))
             .Configure<MetadataCenterOptions>(
                 _configuration.GetSection(nameof(MetadataCenterOptions)));

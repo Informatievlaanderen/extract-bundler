@@ -102,9 +102,9 @@ public abstract class BaseBundler<T> : IDisposable
         await _s3ZipArchiveStream.DisposeAsync();
 
         await _s3Client.UploadBlobInChunksAsync(s3ZipAsBytes, Identifier, _cancellationToken);
-        _logger.LogInformation("Upload to S3 Blob completed.");
+        _logger.LogWarning("Upload to S3 Blob completed.");
 
-        _logger.LogInformation(Identifier.GetValue(ZipKey.ExtractDoneMessage));
+        _logger.LogWarning(Identifier.GetValue(ZipKey.ExtractDoneMessage));
     }
 
     private async Task UploadToAzure()
@@ -120,14 +120,14 @@ public abstract class BaseBundler<T> : IDisposable
             return;
         }
 
-        _logger.LogInformation(Identifier.GetValue(ZipKey.MetadataUpdatedMessage));
+        _logger.LogWarning(Identifier.GetValue(ZipKey.MetadataUpdatedMessage));
 
         //Download MetaDataCenter files
         var pdfAsBytes = await _metadataClient.GetPdfAsByteArray(Identifier, _cancellationToken);
         var xmlAsString = await _metadataClient.GetXmlAsString(Identifier, _cancellationToken);
 
-        _logger.LogInformation($"[{Identifier.GetValue(ZipKey.AzureZip)}] ADD {Identifier.GetValue(ZipKey.MetaGrarXml)}");
-        _logger.LogInformation($"[{Identifier.GetValue(ZipKey.AzureZip)}] ADD {Identifier.GetValue(ZipKey.MetaGrarPdf)}");
+        _logger.LogWarning($"[{Identifier.GetValue(ZipKey.AzureZip)}] ADD {Identifier.GetValue(ZipKey.MetaGrarXml)}");
+        _logger.LogWarning($"[{Identifier.GetValue(ZipKey.AzureZip)}] ADD {Identifier.GetValue(ZipKey.MetaGrarPdf)}");
 
         //Append to azure
         await _azureZipArchive.AddToZipArchive(
@@ -144,7 +144,7 @@ public abstract class BaseBundler<T> : IDisposable
             Path.Join(AppDomain.CurrentDomain.BaseDirectory, Identifier.GetValue(ZipKey.InstructionPdf)),
             _cancellationToken);
 
-        _logger.LogInformation(
+        _logger.LogWarning(
             $"[{Identifier.GetValue(ZipKey.AzureZip)}] ADD {Identifier.GetValue(ZipKey.InstructionPdf)}");
 
         await _azureZipArchive.AddToZipArchive(
@@ -159,7 +159,7 @@ public abstract class BaseBundler<T> : IDisposable
         await _azureZipArchiveStream.DisposeAsync();
 
         await _azureBlobClient.UploadBlobInChunksAsync(azureZipAsBytes, Identifier, _cancellationToken);
-        _logger.LogInformation("Upload to Azure Blob completed.");
+        _logger.LogWarning("Upload to Azure Blob completed.");
     }
 
     private async void ExtractDownloaderOnOnZipArchiveDownloaded(object? sender, EventArgs e)
@@ -183,8 +183,8 @@ public abstract class BaseBundler<T> : IDisposable
             string entryFileName = Identifier.RewriteZipEntryFullNameForAzure(entry.FullName);
             lock (_createEntryLock)
             {
-                _logger.LogInformation($"[{Identifier.GetValue(ZipKey.S3Zip)}] ADD {entry.FullName}");
-                _logger.LogInformation($"[{Identifier.GetValue(ZipKey.AzureZip)}] ADD {entryFileName} ");
+                _logger.LogWarning($"[{Identifier.GetValue(ZipKey.S3Zip)}] ADD {entry.FullName}");
+                _logger.LogWarning($"[{Identifier.GetValue(ZipKey.AzureZip)}] ADD {entryFileName} ");
                 Task.WaitAll(new List<Task>()
                 {
                     entry.CopyToAsync(_s3ZipArchive, entry.FullName, _cancellationToken),
