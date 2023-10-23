@@ -1,3 +1,10 @@
+## [2.5.2](https://github.com/informatievlaanderen/extract-bundler/compare/v2.5.1...v2.5.2) (2023-10-23)
+
+
+### Bug Fixes
+
+* remove aggressive logging, add grouped download zips, add bundler toggle ([9905b89](https://github.com/informatievlaanderen/extract-bundler/commit/9905b89c87276e17e5fd0613179d8df55bfabad0))
+
 ## [2.5.1](https://github.com/informatievlaanderen/extract-bundler/compare/v2.5.0...v2.5.1) (2023-10-20)
 
 
