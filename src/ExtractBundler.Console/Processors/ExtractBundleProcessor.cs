@@ -1,62 +1,50 @@
 namespace ExtractBundler.Console.Processors;
 
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Bundlers;
-using Infrastructure.Configurations;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 public class ExtractBundleProcessor : BackgroundService
 {
     private readonly ILogger<ExtractBundleProcessor> _logger;
     private readonly IHostApplicationLifetime _hostApplicationLifetime;
+    private readonly StreetNameBundler streetNameBundler;
+    private readonly AddressBundler addressBundler;
+    private readonly AddressLinksBundler addressLinksBundler;
     private readonly FullBundler _fullBundler;
-    private readonly StreetNameBundler _streetNameBundler;
-    private readonly AddressBundler _addressBundler;
-    private readonly AddressLinksBundler _addressLinksBundler;
-    private readonly BundlerEnableOptions _options;
 
     public ExtractBundleProcessor(
-        IOptions<BundlerEnableOptions> options,
-        FullBundler fullBundler,
         StreetNameBundler streetNameBundler,
         AddressBundler addressBundler,
         AddressLinksBundler addressLinksBundler,
+        FullBundler fullBundler,
         ILoggerFactory loggerFactory,
         IHostApplicationLifetime hostApplicationLifetime)
     {
-        _options = options.Value;
+        this.streetNameBundler = streetNameBundler;
+        this.addressBundler = addressBundler;
+        this.addressLinksBundler = addressLinksBundler;
         _fullBundler = fullBundler;
-        _streetNameBundler = streetNameBundler;
-        _addressBundler = addressBundler;
-        _addressLinksBundler = addressLinksBundler;
         _hostApplicationLifetime = hostApplicationLifetime;
         _logger = loggerFactory.CreateLogger<ExtractBundleProcessor>();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var bundlerTasks = new List<Task>();
-        if (_options.StreetName)
-        {
-            bundlerTasks.Add(_streetNameBundler.Start(stoppingToken));
-        }
-        if (_options.Address)
-        {
-            bundlerTasks.Add(_addressBundler.Start(stoppingToken));
-        }
-        if (_options.AddressLinks)
-        {
-            bundlerTasks.Add(_addressLinksBundler.Start(stoppingToken));
-        }
-        if (_options.Full)
-        {
-            bundlerTasks.Add(_fullBundler.Start(stoppingToken));
-        }
-        await Task.WhenAll(bundlerTasks);
+        await streetNameBundler.Start(stoppingToken);
+        streetNameBundler.Dispose();
+
+        await addressBundler.Start(stoppingToken);
+        addressBundler.Dispose();
+
+        await addressLinksBundler.Start(stoppingToken);
+        addressLinksBundler.Dispose();
+
+        await _fullBundler.Start(stoppingToken);
+        _fullBundler.Dispose();
+
         _logger.LogWarning("Zips complete. See you later alligator!");
         _hostApplicationLifetime.StopApplication();
     }

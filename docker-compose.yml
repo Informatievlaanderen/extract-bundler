@@ -55,6 +55,15 @@ services:
     ports:
       - 19704:8080
 
+  wiremock_public-api:
+    image: rodolpheche/wiremock:2.29.1
+    container_name: extractbundler.wiremock.public-api
+    volumes:
+      - .docker-volumes/wiremock/mappings/public-api:/home/wiremock/mappings
+      - .docker-volumes/wiremock/__files:/home/wiremock/__files
+    ports:
+      - 19928:8080
+
   wiremock_metadatacenter:
     image: rodolpheche/wiremock:2.29.1
     container_name: extractbundler.wiremock.metadatacenter

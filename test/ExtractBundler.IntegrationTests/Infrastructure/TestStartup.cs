@@ -30,15 +30,14 @@ public class TestStartup
             .AddScoped<AddressBundler>()
             .AddScoped<AddressLinksBundler>()
             .AddTransient<MetaDataCenterHttpClient>()
-            .AddSingleton<ExtractDownloader>()
+            .AddTransient<ExtractDownloader>()
             .AddSingleton<S3Client>()
             .AddSingleton<AzureBlobClient>()
             .AddAmazonS3(s3Options)
             .AddAzureBlob(azureOptions)
             .Configure<S3Options>(_configuration.GetSection(nameof(S3Options)))
-            .Configure<Dictionary<string, Dictionary<string, ApiEndPointOptionItem>>>(
-                _configuration.GetSection("ApiEndPointOptions"))
             .Configure<AzureBlobOptions>(_configuration.GetSection(nameof(AzureBlobOptions)))
+            .Configure<BundlerOptions>(_configuration.GetSection(nameof(BundlerOptions)))
             .Configure<MetadataCenterOptions>(
                 _configuration.GetSection(nameof(MetadataCenterOptions)));
     }

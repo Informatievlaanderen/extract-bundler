@@ -12,13 +12,13 @@ using Infrastructure.Configurations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-public abstract class BaseBundler<T> : IDisposable
+public abstract class BaseBundler : IDisposable
 {
-    private readonly ExtractDownloader _extractDownloader;
     private readonly MetaDataCenterHttpClient _metadataClient;
     private readonly S3Client _s3Client;
     private readonly AzureBlobClient _azureBlobClient;
     private readonly AzureBlobOptions _azureOptions;
+    private readonly BundlerOptionItem _bundlerOption;
 
     private readonly MemoryStream _s3ZipArchiveStream;
     private readonly ZipArchive _s3ZipArchive;
@@ -26,26 +26,23 @@ public abstract class BaseBundler<T> : IDisposable
     private readonly MemoryStream _azureZipArchiveStream;
     private readonly ZipArchive _azureZipArchive;
 
-    private CancellationToken _cancellationToken;
-    private readonly object _createEntryLock = new object();
-    private int _downloadedZipArchives = 0;
     private bool _disposed = false;
-    private readonly ILogger<T> _logger;
-
-    protected Identifier Identifier { get; set; }
-    protected List<string> RequiredZipArchives { get; } = new();
-    public bool IsComplete { get; set; }
+    private readonly ILogger<BaseBundler> _logger;
+    private readonly ExtractDownloader _extractDownloader;
 
     protected BaseBundler(
-        ExtractDownloader extractDownloader,
         MetaDataCenterHttpClient metadataClient,
         S3Client s3Client,
         AzureBlobClient azureBlobClient,
         ILoggerFactory loggerFactory,
-        IOptions<AzureBlobOptions> azureOptions)
+        IOptions<AzureBlobOptions> azureOptions,
+        ExtractDownloader extractDownloader,
+        BundlerOptionItem bundlerOption
+    )
     {
-        _logger = loggerFactory.CreateLogger<T>();
+        _bundlerOption = bundlerOption;
         _extractDownloader = extractDownloader;
+        _logger = loggerFactory.CreateLogger<BaseBundler>();
         _metadataClient = metadataClient;
         _s3Client = s3Client;
         _azureBlobClient = azureBlobClient;
@@ -56,44 +53,53 @@ public abstract class BaseBundler<T> : IDisposable
 
         _azureZipArchiveStream = new MemoryStream();
         _azureZipArchive = new ZipArchive(_azureZipArchiveStream, ZipArchiveMode.Create);
-
-        //EventHandlers
-        _extractDownloader.OnZipArchiveDownloaded += ExtractDownloaderOnOnZipArchiveDownloaded;
-        _extractDownloader.OnZipArchiveDownloadFailed += ExtractDownloaderOnOnZipArchiveDownloadFailed;
     }
 
     public async Task Start(CancellationToken cancellationToken = default)
     {
-        _cancellationToken = cancellationToken;
-
-        await _extractDownloader.DownloadAll(cancellationToken);
-
-        while (!(IsComplete || _cancellationToken.IsCancellationRequested))
+        if (!_bundlerOption.Enabled)
         {
-            await Task.Delay(500, _cancellationToken);
+            return;
         }
 
-        await Task.CompletedTask;
-    }
+        await foreach (var zipArchiveInBytes in _extractDownloader.DownloadAll(_bundlerOption.UrlsToList(),
+                           cancellationToken))
+        {
+            await GenerateZipArchivesAndUpload(zipArchiveInBytes, cancellationToken).ConfigureAwait(false);
+        }
 
-    private async Task GenerateZips()
-    {
-        //Stop eventHandlers
-        _extractDownloader.OnZipArchiveDownloaded -= ExtractDownloaderOnOnZipArchiveDownloaded;
-        _extractDownloader.OnZipArchiveDownloadFailed -= ExtractDownloaderOnOnZipArchiveDownloadFailed;
-
-        await UploadToS3();
+        await UploadToS3(cancellationToken);
 
         if (_azureOptions.Enabled)
         {
-            await UploadToAzure();
+            await UploadToAzure(cancellationToken);
         }
 
         _disposed = true;
-        IsComplete = true;
     }
 
-    private async Task UploadToS3()
+    private Task GenerateZipArchivesAndUpload(byte[] zipArchiveInBytes,
+        CancellationToken cancellationToken = default)
+    {
+        using var zipArchiveStream = new MemoryStream(zipArchiveInBytes);
+        using var zipArchive = new ZipArchive(zipArchiveStream, ZipArchiveMode.Read);
+        foreach (var entry in zipArchive.Entries)
+        {
+            //Clone the entries to the destination archive
+            string entryFileName = GetIdentifier().RewriteZipEntryFullNameForAzure(entry.FullName);
+            _logger.LogWarning($"[{GetIdentifier().GetValue(ZipKey.S3Zip)}] ADD {entry.FullName}");
+            _logger.LogWarning($"[{GetIdentifier().GetValue(ZipKey.AzureZip)}] ADD {entryFileName} ");
+            Task.WaitAll(new List<Task>()
+            {
+                entry.CopyToAsync(_s3ZipArchive, entry.FullName, cancellationToken),
+                entry.CopyToAsync(_azureZipArchive, entryFileName, cancellationToken)
+            }.ToArray());
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private async Task UploadToS3(CancellationToken cancellationToken)
     {
         _s3ZipArchive.Dispose();
 
@@ -101,56 +107,58 @@ public abstract class BaseBundler<T> : IDisposable
 
         await _s3ZipArchiveStream.DisposeAsync();
 
-        await _s3Client.UploadBlobInChunksAsync(s3ZipAsBytes, Identifier, _cancellationToken);
+        await _s3Client.UploadBlobInChunksAsync(s3ZipAsBytes, GetIdentifier(), cancellationToken);
         _logger.LogWarning("Upload to S3 Blob completed.");
 
-        _logger.LogWarning(Identifier.GetValue(ZipKey.ExtractDoneMessage));
+        _logger.LogWarning(GetIdentifier().GetValue(ZipKey.ExtractDoneMessage));
     }
 
-    private async Task UploadToAzure()
+    private async Task UploadToAzure(CancellationToken cancellationToken)
     {
         //Update MetaDataCenter
         var results = await _metadataClient.UpdateCswPublication(
-            Identifier,
+            GetIdentifier(),
             DateTime.Now,
-            _cancellationToken);
+            cancellationToken);
         if (results == null)
         {
-            _logger.LogCritical(Identifier.GetValue(ZipKey.MetadataUpdatedMessageFailed));
+            _logger.LogCritical(GetIdentifier().GetValue(ZipKey.MetadataUpdatedMessageFailed));
             return;
         }
 
-        _logger.LogWarning(Identifier.GetValue(ZipKey.MetadataUpdatedMessage));
+        _logger.LogWarning(GetIdentifier().GetValue(ZipKey.MetadataUpdatedMessage));
 
         //Download MetaDataCenter files
-        var pdfAsBytes = await _metadataClient.GetPdfAsByteArray(Identifier, _cancellationToken);
-        var xmlAsString = await _metadataClient.GetXmlAsString(Identifier, _cancellationToken);
+        var pdfAsBytes = await _metadataClient.GetPdfAsByteArray(GetIdentifier(), cancellationToken);
+        var xmlAsString = await _metadataClient.GetXmlAsString(GetIdentifier(), cancellationToken);
 
-        _logger.LogWarning($"[{Identifier.GetValue(ZipKey.AzureZip)}] ADD {Identifier.GetValue(ZipKey.MetaGrarXml)}");
-        _logger.LogWarning($"[{Identifier.GetValue(ZipKey.AzureZip)}] ADD {Identifier.GetValue(ZipKey.MetaGrarPdf)}");
+        _logger.LogWarning(
+            $"[{GetIdentifier().GetValue(ZipKey.AzureZip)}] ADD {GetIdentifier().GetValue(ZipKey.MetaGrarXml)}");
+        _logger.LogWarning(
+            $"[{GetIdentifier().GetValue(ZipKey.AzureZip)}] ADD {GetIdentifier().GetValue(ZipKey.MetaGrarPdf)}");
 
         //Append to azure
         await _azureZipArchive.AddToZipArchive(
-            Identifier.GetValue(ZipKey.MetaGrarXml),
+            GetIdentifier().GetValue(ZipKey.MetaGrarXml),
             xmlAsString,
-            _cancellationToken);
+            cancellationToken);
 
         await _azureZipArchive.AddToZipArchive(
-            Identifier.GetValue(ZipKey.MetaGrarPdf),
+            GetIdentifier().GetValue(ZipKey.MetaGrarPdf),
             pdfAsBytes,
-            _cancellationToken);
+            cancellationToken);
 
         var instructionPdfAsBytes = await File.ReadAllBytesAsync(
-            Path.Join(AppDomain.CurrentDomain.BaseDirectory, Identifier.GetValue(ZipKey.InstructionPdf)),
-            _cancellationToken);
+            Path.Join(AppDomain.CurrentDomain.BaseDirectory, GetIdentifier().GetValue(ZipKey.InstructionPdf)),
+            cancellationToken);
 
         _logger.LogWarning(
-            $"[{Identifier.GetValue(ZipKey.AzureZip)}] ADD {Identifier.GetValue(ZipKey.InstructionPdf)}");
+            $"[{GetIdentifier().GetValue(ZipKey.AzureZip)}] ADD {GetIdentifier().GetValue(ZipKey.InstructionPdf)}");
 
         await _azureZipArchive.AddToZipArchive(
-            Identifier.GetValue(ZipKey.InstructionPdf),
+            GetIdentifier().GetValue(ZipKey.InstructionPdf),
             instructionPdfAsBytes,
-            _cancellationToken);
+            cancellationToken);
 
         _azureZipArchive.Dispose();
 
@@ -158,53 +166,11 @@ public abstract class BaseBundler<T> : IDisposable
 
         await _azureZipArchiveStream.DisposeAsync();
 
-        await _azureBlobClient.UploadBlobInChunksAsync(azureZipAsBytes, Identifier, _cancellationToken);
+        await _azureBlobClient.UploadBlobInChunksAsync(azureZipAsBytes, GetIdentifier(), cancellationToken);
         _logger.LogWarning("Upload to Azure Blob completed.");
     }
 
-    private async void ExtractDownloaderOnOnZipArchiveDownloaded(object? sender, EventArgs e)
-    {
-        if (sender == null)
-        {
-            throw new InvalidOperationException("ZipArchive is null");
-        }
-
-        var (fileName, zipArchive) = (ValueTuple<string, ZipArchive>)sender;
-
-        //No Operation
-        if (!RequiredZipArchives.Contains(fileName))
-        {
-            return;
-        }
-
-        foreach (var entry in zipArchive.Entries)
-        {
-            //Clone the entries to the destination archive
-            string entryFileName = Identifier.RewriteZipEntryFullNameForAzure(entry.FullName);
-            lock (_createEntryLock)
-            {
-                _logger.LogWarning($"[{Identifier.GetValue(ZipKey.S3Zip)}] ADD {entry.FullName}");
-                _logger.LogWarning($"[{Identifier.GetValue(ZipKey.AzureZip)}] ADD {entryFileName} ");
-                Task.WaitAll(new List<Task>()
-                {
-                    entry.CopyToAsync(_s3ZipArchive, entry.FullName, _cancellationToken),
-                    entry.CopyToAsync(_azureZipArchive, entryFileName, _cancellationToken)
-                }.ToArray());
-            }
-        }
-
-        _downloadedZipArchives++;
-
-        if (_downloadedZipArchives >= RequiredZipArchives.Count)
-        {
-            await GenerateZips();
-        }
-    }
-
-    private void ExtractDownloaderOnOnZipArchiveDownloadFailed(object? sender, EventArgs e)
-    {
-        throw new OperationCanceledException();
-    }
+    protected abstract Identifier GetIdentifier();
 
     public void Dispose()
     {
