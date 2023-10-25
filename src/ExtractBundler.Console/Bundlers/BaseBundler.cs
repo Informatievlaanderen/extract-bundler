@@ -1,7 +1,6 @@
 namespace ExtractBundler.Console.Bundlers;
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Threading;
@@ -49,10 +48,10 @@ public abstract class BaseBundler : IDisposable
         _azureOptions = azureOptions.Value;
 
         _s3ZipArchiveStream = new MemoryStream();
-        _s3ZipArchive = new ZipArchive(_s3ZipArchiveStream, ZipArchiveMode.Create);
+        _s3ZipArchive = new ZipArchive(_s3ZipArchiveStream, ZipArchiveMode.Create, true);
 
         _azureZipArchiveStream = new MemoryStream();
-        _azureZipArchive = new ZipArchive(_azureZipArchiveStream, ZipArchiveMode.Create);
+        _azureZipArchive = new ZipArchive(_azureZipArchiveStream, ZipArchiveMode.Create, true);
     }
 
     public async Task Start(CancellationToken cancellationToken = default)
@@ -62,77 +61,61 @@ public abstract class BaseBundler : IDisposable
             return;
         }
 
-        await foreach (var downloadStream in _extractDownloader.DownloadAll(_bundlerOption.UrlsToList(),
-                           cancellationToken))
+        await _extractDownloader.DownloadAllAsync(
+            _bundlerOption.UrlsToList(),
+            AddToS3ZipArchiveAsync,
+            cancellationToken);
+        _extractDownloader.Dispose();
+        _s3ZipArchive.Dispose();
+        await _s3Client.UploadBlobInChunksAsync(_s3ZipArchiveStream, GetIdentifier(), cancellationToken);
+        _logger.LogWarning("Upload to S3 Blob completed.");
+
+        if (!_azureOptions.Enabled)
         {
-            await GenerateZipArchivesAndUpload(downloadStream, cancellationToken).ConfigureAwait(false);
+            await _s3ZipArchiveStream.DisposeAsync();
+            _disposed = true;
+            return;
         }
 
-        await UploadToS3(cancellationToken);
+        _s3ZipArchiveStream.Seek(0, SeekOrigin.Begin);
+        await AddToAzureZipArchiveAsync(_s3ZipArchiveStream, cancellationToken).ConfigureAwait(false);
+        await AddAdditionalFilesToAzureZipArchiveAsync(cancellationToken).ConfigureAwait(false);
+        await _s3ZipArchiveStream.DisposeAsync();
+        _azureZipArchive.Dispose();
 
-        if (_azureOptions.Enabled)
-        {
-            await UploadToAzure(cancellationToken);
-        }
+        await _azureBlobClient.UploadBlobInChunksAsync(
+            _azureZipArchiveStream,
+            GetIdentifier(),
+            cancellationToken);
+        await _azureZipArchiveStream.DisposeAsync();
 
+        _logger.LogWarning("Upload to Azure Blob completed.");
+        _logger.LogWarning(GetIdentifier().GetValue(ZipKey.ExtractDoneMessage));
         _disposed = true;
     }
 
-    private Task GenerateZipArchivesAndUpload(
-        Stream zipArchiveStream,
-        CancellationToken cancellationToken = default)
+    private async Task AddToS3ZipArchiveAsync(Stream zipArchiveStream, CancellationToken cancellationToken = default)
     {
-
-        //using StreamReader reader = new StreamReader(zipArchiveStream);
-
-
-        //using var zipArchiveStream = new MemoryStream(ZipArchiveStream);
         using var zipArchive = new ZipArchive(zipArchiveStream, ZipArchiveMode.Read);
         foreach (var entry in zipArchive.Entries)
         {
-            //Clone the entries to the destination archive
-            string entryFileName = GetIdentifier().RewriteZipEntryFullNameForAzure(entry.FullName);
             _logger.LogWarning($"[{GetIdentifier().GetValue(ZipKey.S3Zip)}] ADD {entry.FullName}");
+            await entry.CopyToAsync(_s3ZipArchive, entry.FullName, cancellationToken);
+        }
+    }
+
+    private async Task AddToAzureZipArchiveAsync(Stream zipArchiveStream, CancellationToken cancellationToken = default)
+    {
+        using var zipArchive = new ZipArchive(zipArchiveStream, ZipArchiveMode.Read);
+        foreach (var entry in zipArchive.Entries)
+        {
+            var entryFileName = GetIdentifier().RewriteZipEntryFullNameForAzure(entry.FullName);
             _logger.LogWarning($"[{GetIdentifier().GetValue(ZipKey.AzureZip)}] ADD {entryFileName} ");
-            Task.WaitAll(new List<Task>()
-            {
-                entry.CopyToAsync(_s3ZipArchive, entry.FullName, cancellationToken),
-                entry.CopyToAsync(_azureZipArchive, entryFileName, cancellationToken)
-            }.ToArray());
+            await entry.CopyToAsync(_azureZipArchive, entryFileName, cancellationToken);
         }
-        zipArchiveStream.Dispose();
-        return Task.CompletedTask;
     }
 
-    private async Task UploadToS3(Stream zipArchiveStream, CancellationToken cancellationToken)
-    {
-        using var zipArchive = new ZipArchive(zipArchiveStream, ZipArchiveMode.Read);
-        foreach (var entry in zipArchive.Entries)
-        {
-            _logger.LogWarning($"[{GetIdentifier().GetValue(ZipKey.S3Zip)}] ADD {entry.FullName}");
-            Task.WaitAll(new List<Task>()
-            {
-                entry.CopyToAsync(_s3ZipArchive, entry.FullName, cancellationToken)
-            }.ToArray());
-        }
-        zipArchiveStream.Dispose();
-        GC.Collect();
-        GC.WaitForPendingFinalizers();
-        GC.Collect();
-
-        _s3ZipArchive.Dispose();
-
-        var s3ZipAsBytes = _s3ZipArchiveStream.ToArray();
-
-        _s3ZipArchiveStream.Dispose();
-
-        await _s3Client.UploadBlobInChunksAsync(s3ZipAsBytes, GetIdentifier(), cancellationToken);
-        _logger.LogWarning("Upload to S3 Blob completed.");
-
-        _logger.LogWarning(GetIdentifier().GetValue(ZipKey.ExtractDoneMessage));
-    }
-
-    private async Task UploadToAzure(CancellationToken cancellationToken)
+    private async Task AddAdditionalFilesToAzureZipArchiveAsync(CancellationToken cancellationToken)
     {
         //Update MetaDataCenter
         var results = await _metadataClient.UpdateCswPublication(
@@ -178,20 +161,12 @@ public abstract class BaseBundler : IDisposable
             GetIdentifier().GetValue(ZipKey.InstructionPdf),
             instructionPdfAsBytes,
             cancellationToken);
-
-        _azureZipArchive.Dispose();
-
-        var azureZipAsBytes = _azureZipArchiveStream.ToArray();
-
-        await _azureZipArchiveStream.DisposeAsync();
-
-        await _azureBlobClient.UploadBlobInChunksAsync(azureZipAsBytes, GetIdentifier(), cancellationToken);
-        _logger.LogWarning("Upload to Azure Blob completed.");
     }
 
     protected abstract Identifier GetIdentifier();
 
-    public void Dispose() {
+    public void Dispose()
+    {
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
@@ -207,6 +182,7 @@ public abstract class BaseBundler : IDisposable
                 _azureZipArchive?.Dispose();
                 _s3ZipArchiveStream?.Dispose();
                 _azureZipArchiveStream?.Dispose();
+                _extractDownloader?.Dispose();
             }
 
             _disposed = true;

@@ -16,7 +16,6 @@ namespace ExtractBundler.Console.CloudStorageClients
     public class AzureBlobClient
     {
         private readonly AzureBlobOptions _options;
-        private const int ChunkSizeInBytes = 4 * 1024 * 1024; // 4 MB chunk size
         private readonly BlobContainerClient _containerClient;
         private readonly ILogger<AzureBlobClient> _logger;
 
@@ -60,44 +59,22 @@ namespace ExtractBundler.Console.CloudStorageClients
         }
 
         public async Task UploadBlobInChunksAsync(
-            byte[] content,
+            MemoryStream sourceStream,
             Identifier identifier,
             CancellationToken cancellationToken = default)
         {
-            BlockBlobClient blobClient = _containerClient.GetBlockBlobClient(GetBlobName(identifier));
-            await using var sourceStream = new MemoryStream(content);
             sourceStream.Seek(0, SeekOrigin.Begin);
-            long remainingBytes = sourceStream.Length;
-            long offset = 0;
-            byte[] buffer = new byte[ChunkSizeInBytes];
-            var blockIds = new List<string>();
-            while (remainingBytes > 0)
-            {
-                int bytesRead = await sourceStream.ReadAsync(
-                    buffer,
-                    0,
-                    (int)Math.Min(ChunkSizeInBytes, remainingBytes),
-                    cancellationToken);
-
-                await using(MemoryStream ms = new MemoryStream(buffer, 0, bytesRead))
+            var blobName = GetBlobName(identifier);
+            BlockBlobClient blobClient = _containerClient.GetBlockBlobClient(blobName);
+            await blobClient.UploadAsync(
+                sourceStream,
+                new BlobUploadOptions()
                 {
-                    var blockId = Convert.ToBase64String(BitConverter.GetBytes(offset));
-                    blockIds.Add(blockId);
-                    await blobClient.StageBlockAsync(blockId, ms, cancellationToken: cancellationToken);
-                }
-
-                remainingBytes -= bytesRead;
-                offset += bytesRead;
-            }
-
-            var commitOptions = new CommitBlockListOptions
-            {
-                HttpHeaders = new BlobHttpHeaders
-                {
-                    ContentType = "application/octet-stream"
-                }
-            };
-            await blobClient.CommitBlockListAsync(blockIds, commitOptions, cancellationToken);
+                    HttpHeaders = new BlobHttpHeaders
+                    {
+                        ContentType = "application/octet-stream"
+                    }
+                }, cancellationToken);
         }
 
         public async Task<IEnumerable<Tuple<string, string, long?>>> ListBlobsAsync(

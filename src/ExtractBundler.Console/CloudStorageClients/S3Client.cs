@@ -1,4 +1,4 @@
-namespace ExtractBundler.Console.CloudStorageClients
+﻿namespace ExtractBundler.Console.CloudStorageClients
 {
     using System;
     using System.IO;
@@ -23,30 +23,32 @@ namespace ExtractBundler.Console.CloudStorageClients
             _logger = loggerFactory.CreateLogger<S3Client>();
         }
 
-        public async Task UploadBlobInChunksAsync(byte[] content, Identifier identifier,
+        public async Task UploadBlobInChunksAsync(MemoryStream stream, Identifier identifier,
             CancellationToken token = default)
         {
-            using var transferUtility = new TransferUtility(_amazonS3);
-            try
+            using (var transferUtility = new TransferUtility(_amazonS3))
             {
-                await using var stream = new MemoryStream(content);
-                stream.Seek(0, SeekOrigin.Begin);
-                var request = new TransferUtilityUploadRequest()
+                try
                 {
-                    BucketName = _options.BucketName,
-                    Key = identifier.GetValue(ZipKey.S3Zip),
-                    InputStream = stream,
-                    ContentType = "application/octet-stream"
-                };
-                await transferUtility.UploadAsync(request, token);
-            }
-            catch (AmazonS3Exception e)
-            {
-                _logger.LogError("Error encountered on server. Message:'{e.Message}' when writing an object", e);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("Unknown encountered on server. Message:'{e.Message}' when writing an object", e);
+                    stream.Seek(0, SeekOrigin.Begin);
+                    var request = new TransferUtilityUploadRequest()
+                    {
+                        BucketName = _options.BucketName,
+                        Key = identifier.GetValue(ZipKey.S3Zip),
+                        InputStream = stream,
+                        ContentType = "application/octet-stream",
+                        AutoCloseStream = false,
+                    };
+                    await transferUtility.UploadAsync(request, token);
+                }
+                catch (AmazonS3Exception e)
+                {
+                    _logger.LogError("Error encountered on server. Message:'{e.Message}' when writing an object", e);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("Unknown encountered on server. Message:'{e.Message}' when writing an object", e);
+                }
             }
         }
 

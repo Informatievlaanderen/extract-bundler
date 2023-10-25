@@ -87,7 +87,7 @@ public sealed class Program
                     .AddScoped<AddressBundler>()
                     .AddScoped<AddressLinksBundler>()
                     .AddTransient<MetaDataCenterHttpClient>()
-                    .AddTransient<ExtractDownloader>()
+                    .AddScoped<ExtractDownloader>()
                     .AddAmazonS3(s3Options)
                     .AddAzureBlob(azureOptions)
                     .AddSingleton<S3Client>()
