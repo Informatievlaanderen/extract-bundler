@@ -62,10 +62,10 @@ public abstract class BaseBundler : IDisposable
             return;
         }
 
-        await foreach (var zipArchiveInBytes in _extractDownloader.DownloadAll(_bundlerOption.UrlsToList(),
+        await foreach (var downloadStream in _extractDownloader.DownloadAll(_bundlerOption.UrlsToList(),
                            cancellationToken))
         {
-            await GenerateZipArchivesAndUpload(zipArchiveInBytes, cancellationToken).ConfigureAwait(false);
+            await GenerateZipArchivesAndUpload(downloadStream, cancellationToken).ConfigureAwait(false);
         }
 
         await UploadToS3(cancellationToken);
@@ -78,10 +78,15 @@ public abstract class BaseBundler : IDisposable
         _disposed = true;
     }
 
-    private Task GenerateZipArchivesAndUpload(byte[] zipArchiveInBytes,
+    private Task GenerateZipArchivesAndUpload(
+        Stream zipArchiveStream,
         CancellationToken cancellationToken = default)
     {
-        using var zipArchiveStream = new MemoryStream(zipArchiveInBytes);
+
+        //using StreamReader reader = new StreamReader(zipArchiveStream);
+
+
+        //using var zipArchiveStream = new MemoryStream(ZipArchiveStream);
         using var zipArchive = new ZipArchive(zipArchiveStream, ZipArchiveMode.Read);
         foreach (var entry in zipArchive.Entries)
         {
@@ -95,17 +100,31 @@ public abstract class BaseBundler : IDisposable
                 entry.CopyToAsync(_azureZipArchive, entryFileName, cancellationToken)
             }.ToArray());
         }
-
+        zipArchiveStream.Dispose();
         return Task.CompletedTask;
     }
 
-    private async Task UploadToS3(CancellationToken cancellationToken)
+    private async Task UploadToS3(Stream zipArchiveStream, CancellationToken cancellationToken)
     {
+        using var zipArchive = new ZipArchive(zipArchiveStream, ZipArchiveMode.Read);
+        foreach (var entry in zipArchive.Entries)
+        {
+            _logger.LogWarning($"[{GetIdentifier().GetValue(ZipKey.S3Zip)}] ADD {entry.FullName}");
+            Task.WaitAll(new List<Task>()
+            {
+                entry.CopyToAsync(_s3ZipArchive, entry.FullName, cancellationToken)
+            }.ToArray());
+        }
+        zipArchiveStream.Dispose();
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+
         _s3ZipArchive.Dispose();
 
         var s3ZipAsBytes = _s3ZipArchiveStream.ToArray();
 
-        await _s3ZipArchiveStream.DisposeAsync();
+        _s3ZipArchiveStream.Dispose();
 
         await _s3Client.UploadBlobInChunksAsync(s3ZipAsBytes, GetIdentifier(), cancellationToken);
         _logger.LogWarning("Upload to S3 Blob completed.");
@@ -172,8 +191,7 @@ public abstract class BaseBundler : IDisposable
 
     protected abstract Identifier GetIdentifier();
 
-    public void Dispose()
-    {
+    public void Dispose() {
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
