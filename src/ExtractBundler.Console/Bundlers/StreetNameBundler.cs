@@ -11,7 +11,6 @@ public class StreetNameBundler : BaseBundler
 {
     public StreetNameBundler(
         IOptions<BundlerOptions> options,
-        ExtractDownloader extractDownloader,
         MetaDataCenterHttpClient metadataClient,
         S3Client s3Client,
         AzureBlobClient azureBlobClient,
@@ -23,7 +22,6 @@ public class StreetNameBundler : BaseBundler
             azureBlobClient,
             loggerFactory,
             azureOptions,
-            extractDownloader,
             options.Value.StreetName)
     {
     }

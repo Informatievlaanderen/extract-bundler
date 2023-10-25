@@ -10,7 +10,6 @@ public class AddressLinksBundler : BaseBundler
 {
     public AddressLinksBundler(
         IOptions<BundlerOptions> options,
-        ExtractDownloader extractDownloader,
         MetaDataCenterHttpClient metadataClient,
         S3Client s3Client,
         AzureBlobClient azureBlobClient,
@@ -22,7 +21,6 @@ public class AddressLinksBundler : BaseBundler
             azureBlobClient,
             loggerFactory,
             azureOptions,
-            extractDownloader,
             options.Value.AddressLinks)
     {
     }

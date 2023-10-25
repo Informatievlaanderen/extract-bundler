@@ -35,12 +35,11 @@ public abstract class BaseBundler : IDisposable
         AzureBlobClient azureBlobClient,
         ILoggerFactory loggerFactory,
         IOptions<AzureBlobOptions> azureOptions,
-        ExtractDownloader extractDownloader,
         BundlerOptionItem bundlerOption
     )
     {
         _bundlerOption = bundlerOption;
-        _extractDownloader = extractDownloader;
+        _extractDownloader = new ExtractDownloader(loggerFactory);
         _logger = loggerFactory.CreateLogger<BaseBundler>();
         _metadataClient = metadataClient;
         _s3Client = s3Client;
