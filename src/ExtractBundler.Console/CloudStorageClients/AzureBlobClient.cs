@@ -1,4 +1,4 @@
-﻿namespace ExtractBundler.Console.CloudStorageClients
+namespace ExtractBundler.Console.CloudStorageClients
 {
     using System;
     using System.Collections.Generic;
@@ -65,7 +65,7 @@
             CancellationToken cancellationToken = default)
         {
             BlockBlobClient blobClient = _containerClient.GetBlockBlobClient(GetBlobName(identifier));
-            using var sourceStream = new MemoryStream(content);
+            await using var sourceStream = new MemoryStream(content);
             sourceStream.Seek(0, SeekOrigin.Begin);
             long remainingBytes = sourceStream.Length;
             long offset = 0;
@@ -79,7 +79,7 @@
                     (int)Math.Min(ChunkSizeInBytes, remainingBytes),
                     cancellationToken);
 
-                using (MemoryStream ms = new MemoryStream(buffer, 0, bytesRead))
+                await using(MemoryStream ms = new MemoryStream(buffer, 0, bytesRead))
                 {
                     var blockId = Convert.ToBase64String(BitConverter.GetBytes(offset));
                     blockIds.Add(blockId);

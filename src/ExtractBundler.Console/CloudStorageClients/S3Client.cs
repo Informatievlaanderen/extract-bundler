@@ -1,4 +1,4 @@
-﻿namespace ExtractBundler.Console.CloudStorageClients
+namespace ExtractBundler.Console.CloudStorageClients
 {
     using System;
     using System.IO;
@@ -29,7 +29,7 @@
             using var transferUtility = new TransferUtility(_amazonS3);
             try
             {
-                using var stream = new MemoryStream(content);
+                await using var stream = new MemoryStream(content);
                 stream.Seek(0, SeekOrigin.Begin);
                 var request = new TransferUtilityUploadRequest()
                 {
@@ -60,7 +60,7 @@
                 return null;
             }
 
-            using var destStream = new MemoryStream();
+            await using var destStream = new MemoryStream();
             await using var stream = obj.ResponseStream;
             await stream.CopyToAsync(destStream, cancellationToken);
             return destStream.ToArray();

@@ -67,7 +67,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
 
         var azureZipAsBytes = await _azureBlobClient.DownloadBlobAsync(blobName!);
         azureZipAsBytes.Should().NotBeNull();
-        using var azureZipStream = new MemoryStream(azureZipAsBytes!);
+        await using var azureZipStream = new MemoryStream(azureZipAsBytes!);
 
         var dateStamp = DateTime.Today.ToString("yyyyMMdd");
 
@@ -113,7 +113,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
         // S3 (Minio) Download
         var s3ZipAsBytes = await _s3Client.GetZipArchiveInBytesFromS3Async(Identifier.Full);
         s3ZipAsBytes.Should().NotBeNull();
-        using var s3ZipStream = new MemoryStream(s3ZipAsBytes!);
+        await using var s3ZipStream = new MemoryStream(s3ZipAsBytes!);
         using var s3ZipArchive = new ZipArchive(s3ZipStream, ZipArchiveMode.Read);
         var s3ActualFiles = s3ZipArchive.Entries.Select(i => i.FullName);
         var s3ExpectedFiles = new[]
@@ -161,7 +161,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
 
         var azureZipAsBytes = await _azureBlobClient.DownloadBlobAsync(blobName!);
         azureZipAsBytes.Should().NotBeNull();
-        using var azureZipStream = new MemoryStream(azureZipAsBytes!);
+        await using var azureZipStream = new MemoryStream(azureZipAsBytes!);
 
         var dateStamp = DateTime.Today.ToString("yyyyMMdd");
 
@@ -183,7 +183,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
         // S3 (Minio) Download
         var s3ZipAsBytes = await _s3Client.GetZipArchiveInBytesFromS3Async(Identifier.Address);
         s3ZipAsBytes.Should().NotBeNull();
-        using var s3ZipStream = new MemoryStream(s3ZipAsBytes!);
+        await using var s3ZipStream = new MemoryStream(s3ZipAsBytes!);
         using var s3ZipArchive = new ZipArchive(s3ZipStream, ZipArchiveMode.Read);
         var s3ActualFiles = s3ZipArchive.Entries.Select(i => i.FullName);
         var s3ExpectedFiles = new[]
@@ -208,7 +208,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
 
         var azureZipAsBytes = await _azureBlobClient.DownloadBlobAsync(blobName!);
         azureZipAsBytes.Should().NotBeNull();
-        using var azureZipStream = new MemoryStream(azureZipAsBytes!);
+        await using var azureZipStream = new MemoryStream(azureZipAsBytes!);
 
         var dateStamp = DateTime.Today.ToString("yyyyMMdd");
         var azureExpectedFiles = new[]
@@ -233,7 +233,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
         // S3 (Minio) Download
         var s3ZipAsBytes = await _s3Client.GetZipArchiveInBytesFromS3Async(Identifier.AddressLinks);
         s3ZipAsBytes.Should().NotBeNull();
-        using var s3ZipStream = new MemoryStream(s3ZipAsBytes!);
+        await using var s3ZipStream = new MemoryStream(s3ZipAsBytes!);
         using var s3ZipArchive = new ZipArchive(s3ZipStream, ZipArchiveMode.Read);
         var s3ActualFiles = s3ZipArchive.Entries.Select(i => i.FullName);
         var s3ExpectedFiles = new[]
@@ -260,7 +260,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
         blobName.Should().NotBeNull();
         var azureZipAsBytes = await _azureBlobClient.DownloadBlobAsync(blobName!);
         azureZipAsBytes.Should().NotBeNull();
-        using var azureZipStream = new MemoryStream(azureZipAsBytes!);
+        await using var azureZipStream = new MemoryStream(azureZipAsBytes!);
         var dateStamp = DateTime.Today.ToString("yyyyMMdd");
         var azureExpectedFiles = new[]
         {
@@ -281,7 +281,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
         // S3 (Minio) Download
         var s3ZipAsBytes = await _s3Client.GetZipArchiveInBytesFromS3Async(Identifier.StreetName);
         s3ZipAsBytes.Should().NotBeNull();
-        using var s3ZipStream = new MemoryStream(s3ZipAsBytes!);
+        await using var s3ZipStream = new MemoryStream(s3ZipAsBytes!);
         using var s3ZipArchive = new ZipArchive(s3ZipStream, ZipArchiveMode.Read);
         var s3ActualFiles = s3ZipArchive.Entries.Select(i => i.FullName);
         var s3ExpectedFiles = new[]

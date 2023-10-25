@@ -33,17 +33,23 @@ public class ExtractBundleProcessor : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await streetNameBundler.Start(stoppingToken);
-        streetNameBundler.Dispose();
+        // await streetNameBundler.Start(stoppingToken);
+        // streetNameBundler.Dispose();
 
         await addressBundler.Start(stoppingToken);
         addressBundler.Dispose();
 
-        await addressLinksBundler.Start(stoppingToken);
-        addressLinksBundler.Dispose();
+        await addressBundler.Start(stoppingToken);
+        addressBundler.Dispose();
 
-        await _fullBundler.Start(stoppingToken);
-        _fullBundler.Dispose();
+        await addressBundler.Start(stoppingToken);
+        addressBundler.Dispose();
+
+        // await addressLinksBundler.Start(stoppingToken);
+        // addressLinksBundler.Dispose();
+        //
+        // await _fullBundler.Start(stoppingToken);
+        // _fullBundler.Dispose();
 
         _logger.LogWarning("Zips complete. See you later alligator!");
         _hostApplicationLifetime.StopApplication();
