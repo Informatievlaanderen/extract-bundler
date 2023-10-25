@@ -1,3 +1,10 @@
+## [2.5.4](https://github.com/informatievlaanderen/extract-bundler/compare/v2.5.3...v2.5.4) (2023-10-25)
+
+
+### Bug Fixes
+
+* memory issue ([#51](https://github.com/informatievlaanderen/extract-bundler/issues/51)) ([198764e](https://github.com/informatievlaanderen/extract-bundler/commit/198764e381328ef9f00733a34860915695b5f09c))
+
 ## [2.5.3](https://github.com/informatievlaanderen/extract-bundler/compare/v2.5.2...v2.5.3) (2023-10-23)
 
 
