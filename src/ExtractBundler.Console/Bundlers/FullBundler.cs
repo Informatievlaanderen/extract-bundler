@@ -10,7 +10,6 @@ public class FullBundler : BaseBundler
 {
     public FullBundler(
         IOptions<BundlerOptions> options,
-        ExtractDownloader extractDownloader,
         MetaDataCenterHttpClient metadataClient,
         S3Client s3Client,
         AzureBlobClient azureBlobClient,
@@ -22,7 +21,6 @@ public class FullBundler : BaseBundler
             azureBlobClient,
             loggerFactory,
             azureOptions,
-            extractDownloader,
             options.Value.Full)
     {
     }

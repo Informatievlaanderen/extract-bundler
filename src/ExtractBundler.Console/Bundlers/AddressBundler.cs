@@ -10,7 +10,6 @@ public class AddressBundler : BaseBundler
 {
     public AddressBundler(
         IOptions<BundlerOptions> options,
-        ExtractDownloader extractDownloader,
         MetaDataCenterHttpClient metadataClient,
         S3Client s3Client,
         AzureBlobClient azureBlobClient,
@@ -22,7 +21,6 @@ public class AddressBundler : BaseBundler
             azureBlobClient,
             loggerFactory,
             azureOptions,
-            extractDownloader,
             options.Value.Address)
     {
     }
