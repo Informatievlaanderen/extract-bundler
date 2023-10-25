@@ -1,69 +1,68 @@
 namespace ExtractBundler.Console.HttpClients;
 
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-public sealed class ExtractDownloader
+public sealed class ExtractDownloader : IDisposable
 {
     private readonly ILogger<ExtractDownloader>? _logger;
+    private readonly HttpClient _httpClient;
+    private bool _disposed = false;
 
     public ExtractDownloader(ILoggerFactory loggerFactory)
     {
         _logger = loggerFactory.CreateLogger<ExtractDownloader>();
+        _httpClient = new HttpClient();
     }
 
-    public async IAsyncEnumerable<byte[]> DownloadAll(IEnumerable<string> urls,CancellationToken cancellationToken = default)
+    public async Task DownloadAllAsync(
+        IEnumerable<string> urls,
+        Func<Stream, CancellationToken, Task> contentStreamHandlerAsync,
+        CancellationToken cancellationToken = default)
     {
         foreach (var url in urls)
         {
-            using var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            var response = await _httpClient
+                .GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
             if (response.IsSuccessStatusCode)
             {
-                var zipArchiveStream = await GetZipArchiveWithDownloadProgressAsync(response!, cancellationToken);
-                yield return zipArchiveStream;
+                using (var httpContent = response.Content)
+                {
+                    await using (var downloadStream = await httpContent.ReadAsStreamAsync(cancellationToken))
+                    {
+                        await contentStreamHandlerAsync(downloadStream, cancellationToken);
+                    }
+                }
             }
+
             _logger?.LogCritical($"zipfile : {url}");
         }
+
         _logger?.LogWarning("All zips have been downloaded");
     }
 
-    private async Task<byte[]> GetZipArchiveWithDownloadProgressAsync(
-        HttpResponseMessage response,
-        CancellationToken cancellationToken = default)
+    public void Dispose()
     {
-        using var memoryStream = new MemoryStream();
-        long totalBytesRead = 0L, readCount = 0L;
-        var buffer = new byte[8192];
-        var isMoreToRead = true;
-        var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
 
-        do
+    private void Dispose(bool disposing)
+    {
+        if (!_disposed)
         {
-            var bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
-            if (bytesRead == 0)
+            if (disposing)
             {
-                isMoreToRead = false;
-                _logger?.LogWarning($"Download Complete zipfile ({totalBytesRead.FormatBytes()})");
-                continue;
+                _httpClient?.Dispose();
             }
 
-            await memoryStream.WriteAsync(buffer, 0, bytesRead, cancellationToken);
-            totalBytesRead += bytesRead;
-            ++readCount;
-
-            if (readCount % 1000 == 0) //Less aggressive logging
-            {
-                _logger?.LogInformation($"Download zipfile ({totalBytesRead.FormatBytes()})");
-            }
-        } while (isMoreToRead);
-
-        return memoryStream.ToArray();
+            _disposed = true;
+        }
     }
 }

@@ -1,5 +1,6 @@
 namespace ExtractBundler.Console.Processors;
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Bundlers;
