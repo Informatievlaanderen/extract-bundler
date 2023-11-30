@@ -1,3 +1,10 @@
+## [2.5.6](https://github.com/informatievlaanderen/extract-bundler/compare/v2.5.5...v2.5.6) (2023-11-30)
+
+
+### Bug Fixes
+
+* release pipeline ([#54](https://github.com/informatievlaanderen/extract-bundler/issues/54)) ([6d986a4](https://github.com/informatievlaanderen/extract-bundler/commit/6d986a456b0c94c6c8ccbc216efe9fb50553d300))
+
 ## [2.5.5](https://github.com/informatievlaanderen/extract-bundler/compare/v2.5.4...v2.5.5) (2023-10-25)
 
 
