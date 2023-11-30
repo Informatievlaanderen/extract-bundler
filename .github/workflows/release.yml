@@ -340,7 +340,7 @@ jobs:
     strategy:
       matrix:
         image: [
-            'bundler-extract'
+            'extract-bundler'
           ]
     steps:
       - name: Configure AWS credentials (New Production)
