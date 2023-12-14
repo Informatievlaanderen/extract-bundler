@@ -1,3 +1,10 @@
+## [2.5.7](https://github.com/informatievlaanderen/extract-bundler/compare/v2.5.6...v2.5.7) (2023-12-14)
+
+
+### Bug Fixes
+
+* add better logging  + retry ([#55](https://github.com/informatievlaanderen/extract-bundler/issues/55)) ([3923a12](https://github.com/informatievlaanderen/extract-bundler/commit/3923a125002633b08441c4f44f6ce17de5523ea2))
+
 ## [2.5.6](https://github.com/informatievlaanderen/extract-bundler/compare/v2.5.5...v2.5.6) (2023-11-30)
 
 
