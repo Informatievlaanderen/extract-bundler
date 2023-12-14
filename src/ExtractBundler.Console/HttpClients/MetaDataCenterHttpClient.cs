@@ -151,13 +151,24 @@ public sealed class MetaDataCenterHttpClient
         requestMessage.Content = GenerateCswPublicationBody(identifierValue, dateStamp);
 
         using var httpClient = new HttpClient(new HttpClientHandler() { UseCookies = false });
-        var response = await httpClient.SendAsync(requestMessage, cancellationToken).ConfigureAwait(false);
-        if (response.StatusCode != HttpStatusCode.OK)
-        {
-            _logger?.LogCritical("Unable to update CswPublication");
-            throw new ArgumentNullException("Unable to update CswPublication");
-        }
 
+        HttpResponseMessage response;
+        int retry = 0;
+        while(true) {
+            response = await httpClient.SendAsync(requestMessage, cancellationToken).ConfigureAwait(false);
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger?.LogCritical("Unable to update CswPublication", response);
+                await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
+                retry++;
+                if(retry == 10) {
+                    throw new ArgumentNullException("Unable to update CswPublication");
+                }
+                continue;
+            }
+            break;
+        }
+       
         var xmlResponseContent = await response.Content.ReadAsStreamAsync(cancellationToken);
         var xmlResponse = await XDocument.LoadAsync(xmlResponseContent, LoadOptions.None, cancellationToken);
         return xmlResponse;
