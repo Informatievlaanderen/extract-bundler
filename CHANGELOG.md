@@ -1,3 +1,10 @@
+## [2.5.8](https://github.com/informatievlaanderen/extract-bundler/compare/v2.5.7...v2.5.8) (2024-02-21)
+
+
+### Bug Fixes
+
+* **bump:** ci/cd new test ([4495239](https://github.com/informatievlaanderen/extract-bundler/commit/44952392114557ddf2440eb10c6e2edc6e30a496))
+
 ## [2.5.7](https://github.com/informatievlaanderen/extract-bundler/compare/v2.5.6...v2.5.7) (2023-12-14)
 
 
