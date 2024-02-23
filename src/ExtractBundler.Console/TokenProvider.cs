@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using IdentityModel;
 using IdentityModel.Client;
 using Infrastructure.Configurations;
+using Microsoft.Extensions.Options;
 
 public interface ITokenProvider
 {
