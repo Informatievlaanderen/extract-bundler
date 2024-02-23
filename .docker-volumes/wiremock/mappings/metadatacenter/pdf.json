@@ -1,7 +1,7 @@
 {
     "request": {
         "method": "GET",
-        "urlPattern": "/metadatacenter/srv/api/records/[^/]+/formatters/xsl-view-default\\?output=pdf&language=dut&approved=true"
+        "urlPattern": "/srv/api/records/[^/]+/formatters/xsl-view\\?output=pdf&language=dut&attachment=true"
     },
     "response": {
         "status": 200,

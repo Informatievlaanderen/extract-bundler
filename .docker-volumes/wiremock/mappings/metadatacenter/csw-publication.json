@@ -1,7 +1,7 @@
 {
     "request": {
         "method": "POST",
-        "url": "/metadatacenter/srv/dut/csw-publication"
+        "url": "/srv/dut/csw-publication"
     },
     "response": {
         "status": 200,
