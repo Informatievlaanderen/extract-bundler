@@ -7,5 +7,8 @@ public class MetadataCenterOptions
     public string AddressIdentifier { get; set; }
     public string AddressLinksIdentifier { get; set; }
     public string BaseUrl { get; set; }
-    public string Authorization { get; set; }
+
+    public string ClientId { get; set; }
+    public string ClientSecret { get; set; }
+    public string TokenEndPoint { get; set; }
 }

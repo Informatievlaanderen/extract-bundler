@@ -11,6 +11,8 @@ nuget AWSSDK.Extensions.NETCore.Setup 3.7.5
 
 nuget Destructurama.JsonNet 2.0.0
 
+nuget IdentityModel 6.2.0
+
 nuget Serilog 2.10.0
 nuget Serilog.Settings.Configuration 3.3.0
 nuget Serilog.Extensions.Logging 3.1.0
