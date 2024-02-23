@@ -23,16 +23,18 @@ public sealed class MetaDataCenterHttpClient
     private readonly MetadataCenterOptions _options;
     private readonly ConcurrentDictionary<string, IEnumerable<string>> _defaultHeaders;
     private readonly ILogger<MetaDataCenterHttpClient>? _logger;
+    private readonly ITokenProvider _tokenProvider;
 
     private IDictionary<string, IEnumerable<string>> DefaultHeaders => _defaultHeaders;
-    private AccessToken? _accessToken;
 
     public MetaDataCenterHttpClient(
         IOptions<MetadataCenterOptions> options,
+        ITokenProvider tokenProvider,
         ILogger<MetaDataCenterHttpClient>? logger)
     {
         _logger = logger;
         _options = options.Value;
+        _tokenProvider = tokenProvider;
         _baseUrl = new Uri(_options.BaseUrl);
         _defaultHeaders = new ConcurrentDictionary<string, IEnumerable<string>>();
     }
@@ -102,14 +104,14 @@ public sealed class MetaDataCenterHttpClient
             requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
 
-        requestMessage.Headers.TryAddWithoutValidation("Authorization", $"Bearer {GetAccessToken()}");
+        requestMessage.Headers.TryAddWithoutValidation("Authorization", $"Bearer {await _tokenProvider.GetAccessToken()}");
 
         string? xsrfToken = null;
         try
         {
             using var httpClient = new HttpClient(new HttpClientHandler() { UseCookies = false });
             var response = await httpClient.SendAsync(requestMessage, cancellationToken);
-            if (response.StatusCode == HttpStatusCode.Forbidden &&
+            if (response.StatusCode is HttpStatusCode.Forbidden or HttpStatusCode.OK &&
                 response.Headers.TryGetValues("Set-Cookie", out var cookieValues))
             {
                 string cookieHeader = "XSRF-TOKEN=";
@@ -150,7 +152,7 @@ public sealed class MetaDataCenterHttpClient
             requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
 
-        requestMessage.Headers.TryAddWithoutValidation("Authorization", $"Bearer {GetAccessToken()}");
+        requestMessage.Headers.TryAddWithoutValidation("Authorization", $"Bearer {await _tokenProvider.GetAccessToken()}");
 
         requestMessage.Headers.TryAddWithoutValidation("X-XSRF-TOKEN", xsrfToken);
 
@@ -191,7 +193,7 @@ public sealed class MetaDataCenterHttpClient
             requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
 
-        requestMessage.Headers.TryAddWithoutValidation("Authorization", $"Bearer {GetAccessToken()}");
+        requestMessage.Headers.TryAddWithoutValidation("Authorization", $"Bearer {await _tokenProvider.GetAccessToken()}");
 
         using var httpClient = new HttpClient(new HttpClientHandler() { UseCookies = false });
         var response = await httpClient.SendAsync(requestMessage, cancellationToken).ConfigureAwait(false);
@@ -217,7 +219,7 @@ public sealed class MetaDataCenterHttpClient
             requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
 
-        requestMessage.Headers.TryAddWithoutValidation("Authorization", $"Bearer {GetAccessToken()}");
+        requestMessage.Headers.TryAddWithoutValidation("Authorization", $"Bearer {await _tokenProvider.GetAccessToken()}");
 
         using var httpClient = new HttpClient(new HttpClientHandler { UseCookies = false });
         var response = await httpClient.SendAsync(requestMessage, cancellationToken).ConfigureAwait(false);
@@ -231,48 +233,5 @@ public sealed class MetaDataCenterHttpClient
         return pdf;
     }
 
-    private async Task<string> GetAccessToken()
-    {
-        if (_accessToken is not null && !_accessToken.IsExpired)
-        {
-            return _accessToken.Token;
-        }
 
-        var tokenClient = new TokenClient(
-            () => new HttpClient(),
-            new TokenClientOptions
-            {
-                Address = _options.TokenEndPoint,
-                ClientId = _options.ClientId,
-                ClientSecret = _options.ClientSecret,
-                Parameters = new Parameters(new[] { new KeyValuePair<string, string>("scope", "vo_info dv_metadata_read dv_metadata_write") })
-            });
-
-        var response = await tokenClient.RequestTokenAsync(OidcConstants.GrantTypes.ClientCredentials);
-
-        if (response.IsError)
-        {
-            throw new AuthenticationException(response.ErrorDescription);
-        }
-
-        _accessToken = new AccessToken(response.AccessToken!, response.ExpiresIn);
-
-        return _accessToken.Token;
-    }
-}
-
-public class AccessToken
-{
-    private readonly DateTime _expiresAt;
-
-    public string Token { get; }
-
-    // Let's regard it as expired 10 seconds before it actually expires.
-    public bool IsExpired => _expiresAt < DateTime.Now.Add(TimeSpan.FromSeconds(10));
-
-    public AccessToken(string token, int expiresIn)
-    {
-        _expiresAt = DateTime.Now.AddSeconds(expiresIn);
-        Token = token;
-    }
 }

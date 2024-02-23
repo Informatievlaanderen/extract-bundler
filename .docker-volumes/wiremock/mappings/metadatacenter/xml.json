@@ -1,7 +1,7 @@
 {
     "request": {
         "method": "GET",
-        "urlPattern": "/metadatacenter/srv/api/records/[^/]+/formatters/xml"
+        "urlPattern": "/srv/api/records/[^/]+/formatters/xml"
     },
     "response": {
         "status": 200,

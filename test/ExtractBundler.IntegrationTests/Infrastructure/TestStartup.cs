@@ -1,6 +1,7 @@
 namespace ExtractBundler.IntegrationTests.Infrastructure;
 
 using System.Collections.Generic;
+using Console;
 using Console.Bundlers;
 using Console.CloudStorageClients;
 using Console.HttpClients;
@@ -31,6 +32,7 @@ public class TestStartup
             .AddScoped<AddressLinksBundler>()
             .AddTransient<MetaDataCenterHttpClient>()
             .AddTransient<ExtractDownloader>()
+            .AddSingleton<ITokenProvider, FakeTokenProvider>()
             .AddSingleton<S3Client>()
             .AddSingleton<AzureBlobClient>()
             .AddAmazonS3(s3Options)

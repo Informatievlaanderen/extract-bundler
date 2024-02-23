@@ -89,6 +89,7 @@ public sealed class Program
                     .AddTransient<MetaDataCenterHttpClient>()
                     .AddAmazonS3(s3Options)
                     .AddAzureBlob(azureOptions)
+                    .AddSingleton<ITokenProvider, TokenProvider>()
                     .AddSingleton<S3Client>()
                     .AddSingleton<AzureBlobClient>()
                     .Configure<S3Options>(hostContext.Configuration.GetSection(nameof(S3Options)))
