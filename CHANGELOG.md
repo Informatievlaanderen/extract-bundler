@@ -1,3 +1,15 @@
+# [2.6.0](https://github.com/informatievlaanderen/extract-bundler/compare/v2.5.8...v2.6.0) (2024-02-23)
+
+
+### Bug Fixes
+
+* integration tests ([496a9b0](https://github.com/informatievlaanderen/extract-bundler/commit/496a9b0bccfd89c46acf0e52ccb52f3fbb7fc8b7))
+
+
+### Features
+
+* use ACM/IDM bearer token instead of basis auth ([d64e123](https://github.com/informatievlaanderen/extract-bundler/commit/d64e123c2dcb9082cedb769a94892294ed408e28))
+
 ## [2.5.8](https://github.com/informatievlaanderen/extract-bundler/compare/v2.5.7...v2.5.8) (2024-02-21)
 
 
