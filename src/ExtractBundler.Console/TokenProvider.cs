@@ -19,9 +19,9 @@ public class TokenProvider : ITokenProvider
     private AccessToken? _accessToken;
     private readonly MetadataCenterOptions _options;
 
-    public TokenProvider(MetadataCenterOptions options)
+    public TokenProvider(IOptions<MetadataCenterOptions> options)
     {
-        _options = options;
+        _options = options.Value;
     }
 
     public async Task<string> GetAccessToken()
