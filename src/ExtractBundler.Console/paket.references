@@ -8,6 +8,8 @@ Be.Vlaanderen.Basisregisters.BlobStore
 
 Destructurama.JsonNet
 
+IdentityModel
+
 Serilog
 Serilog.Settings.Configuration
 Serilog.Extensions.Logging
