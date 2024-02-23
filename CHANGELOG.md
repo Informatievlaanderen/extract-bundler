@@ -1,3 +1,11 @@
+## [2.6.1](https://github.com/informatievlaanderen/extract-bundler/compare/v2.6.0...v2.6.1) (2024-02-23)
+
+
+### Bug Fixes
+
+* tokenprovider [#2](https://github.com/informatievlaanderen/extract-bundler/issues/2) ([bb62a0f](https://github.com/informatievlaanderen/extract-bundler/commit/bb62a0f9c05e674baf0680858a659636ddfbc84e))
+* tokenprovider options ([3cc1515](https://github.com/informatievlaanderen/extract-bundler/commit/3cc15159268878cb27e89983f9ba0a49e6d5dd1d))
+
 # [2.6.0](https://github.com/informatievlaanderen/extract-bundler/compare/v2.5.8...v2.6.0) (2024-02-23)
 
 
