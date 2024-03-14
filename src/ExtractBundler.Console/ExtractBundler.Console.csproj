@@ -17,9 +17,6 @@
     <ProjectReference Include="..\ExtractBundler\ExtractBundler.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="..\..\static\**\*" CopyToOutputDirectory="Always" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />

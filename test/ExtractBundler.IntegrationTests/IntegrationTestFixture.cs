@@ -20,7 +20,7 @@ namespace ExtractBundler.IntegrationTests
 
         public async Task InitializeAsync()
         {
-            // _dockerCompose = DockerComposer.Compose("docker-compose.yml", "extract-bundler-integration-tests");
+            //_dockerCompose = DockerComposer.Compose("docker-compose.yml", "extract-bundler-integration-tests");
             await WaitForContainerToBecomeAvailable();
 
 

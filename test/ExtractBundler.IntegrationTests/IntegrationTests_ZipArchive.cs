@@ -1,11 +1,11 @@
 namespace ExtractBundler.IntegrationTests;
 
-using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 public partial class IntegrationTests
@@ -14,7 +14,7 @@ public partial class IntegrationTests
     public async Task AddToZipArchiveTest()
     {
         var zipBytes = await GetZipInBytes();
-        Assert.NotNull(zipBytes);
+        zipBytes.Should().NotBeNull();
         await ValidateZipArchive(zipBytes);
     }
 
@@ -41,7 +41,7 @@ public partial class IntegrationTests
             destinationZipStreamBytes = destinationZipStream.ToArray();
         }
 
-        Assert.NotNull(destinationZipStreamBytes);
+        destinationZipStreamBytes.Should().NotBeNull();
         await ValidateZipArchive(zipBytes);
     }
 
@@ -67,8 +67,8 @@ public partial class IntegrationTests
         var destEntry = destEntries.FirstOrDefault(i => i.Name == expectedName);
 
         //Check if zip contains pdf file
-        Assert.True(destEntries.Count == 1);
-        Assert.NotNull(destEntry);
+        destEntries.Should().ContainSingle();
+        destEntry.Should().NotBeNull();
 
         //Read file and check if it's still the same
         await using var src = destEntry!.Open();
@@ -76,6 +76,6 @@ public partial class IntegrationTests
         await src.CopyToAsync(dest);
         var actualPdfContent = dest.ToArray();
 
-        Assert.Equal(_pdfContent, actualPdfContent);
+        actualPdfContent.Should().BeEquivalentTo(_pdfContent);
     }
 }

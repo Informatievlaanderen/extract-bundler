@@ -62,7 +62,7 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
         var list = await _azureBlobClient.ListBlobsAsync();
         var expectedBlobName = _azureOptions.IsTest ? "31086/GRAR.zip" : "10142/GRAR.zip";
         var blobName = list.FirstOrDefault(i => i.Item1 == expectedBlobName)?.Item1;
-        Assert.NotNull(blobName);
+        blobName.Should().NotBeNull(blobName);
         blobName.Should().NotBeNull();
 
         var azureZipAsBytes = await _azureBlobClient.DownloadBlobAsync(blobName!);
