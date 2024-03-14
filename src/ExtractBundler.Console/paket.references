@@ -1,10 +1,15 @@
 Azure.Storage.Blobs
+Autofac
+Autofac.Extensions.DependencyInjection
+
+Microsoft.Extensions.Hosting
 
 AWSSDK.S3
 AWSSDK.Extensions.NETCore.Setup
 
 Be.Vlaanderen.Basisregisters.Aws.DistributedMutex
 Be.Vlaanderen.Basisregisters.BlobStore
+Be.Vlaanderen.Basisregisters.DataDog.Tracing.Autofac
 
 Destructurama.JsonNet
 

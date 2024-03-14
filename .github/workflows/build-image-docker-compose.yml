@@ -40,7 +40,7 @@ jobs:
           SEMVER: ${{ inputs.semver }}
 
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Remove old docker containers
         run: docker container ls -a --filter "name=extractbundler*" --format "{{.ID}}" | awk 'NR>1' | xargs --no-run-if-empty docker container rm
@@ -60,7 +60,7 @@ jobs:
           compose-file: ${{ inputs.docker-compose-file-path }}
 
       - name: Cache Paket
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         env:
           cache-name: cache-paket
         with:
@@ -74,7 +74,7 @@ jobs:
         shell: bash
 
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ secrets.VBR_DOTNET_VERSION }}
 
@@ -145,7 +145,7 @@ jobs:
 
       - name: Upload image
         if: inputs.semver != 'none'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.image-name }}-${{ inputs.semver }}
           path: ~/${{ inputs.image-file }}

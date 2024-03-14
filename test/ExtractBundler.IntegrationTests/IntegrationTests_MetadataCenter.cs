@@ -3,6 +3,7 @@ namespace ExtractBundler.IntegrationTests;
 using System;
 using System.Threading.Tasks;
 using Console.HttpClients;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -27,7 +28,8 @@ public partial class IntegrationTests
 
         // Results
         //Assert.True(string.Equals(expectedCswPublicationResponse, actualCswPublicationResponse, StringComparison.OrdinalIgnoreCase));
-        Assert.Equal(expectedCswPublicationResponse, actualCswPublicationResponse);
-        Assert.True(xmlMetaDataString.Contains(expectedIdentifier));
+
+        actualCswPublicationResponse.Should().BeEquivalentTo(expectedCswPublicationResponse);
+        xmlMetaDataString.Should().Contain(expectedIdentifier);
     }
 }
