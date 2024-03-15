@@ -118,17 +118,26 @@ jobs:
 
       - name: Dotnet build
         shell: bash
-        run: dotnet build --no-restore --runtime 'linux-x64' --self-contained src/${{ inputs.build-project }}
+        run: dotnet build --no-restore -c Release --runtime $RUNTIME --self-contained src/${{ inputs.build-project }} -p:Version=$VERSION -p:FileVersion=$VERSION -p:Copyright="$COPYRIGHT" -p:Company="$COMPANY" -p:Product="$PRODUCT" -p:InformationalVersion=$GIT_HASH
+        env:
+          RUNTIME: 'linux-x64'
+          VERSION: ${{ inputs.semver }}
+          COPYRIGHT: "Copyright \\(c\\) Vlaamse overheid"
+          PRODUCT: "Basisregisters Vlaanderen"
+          COMPANY: "Vlaamse overheid"
+          GIT_HASH: ${{ github.sha }}        
 
       - name: Dotnet publish
         shell: bash
-        run: dotnet publish -o dist/${{ inputs.build-project }}/linux --no-build --no-restore --runtime 'linux-x64' -p:PublishReadyToRun=true --self-contained src/${{ inputs.build-project }}
+        run: dotnet publish -o dist/${{ inputs.build-project }}/linux --no-build --no-restore --runtime $RUNTIME -p:PublishReadyToRun=true --self-contained src/${{ inputs.build-project }}
+        env:
+          RUNTIME: 'linux-x64'
 
       - name: Containerize
         shell: bash
-        run: CI_BUILD_NUMBER=$SEMVER ./build.sh ${{ inputs.build-target }}
+        run: docker build . --no-cache --tag $TAG --build-arg BUILD_NUMBER=$SEMVER
         env:
-          BUILD_DOCKER_REGISTRY: ${{ secrets.VBR_BUILD_DOCKER_REGISTRY_TST }}
+          TAG: ${{ secrets.VBR_BUILD_DOCKER_REGISTRY_TST }}/${{ inputs.registry }}/${{ inputs.image-name }}:${{ inputs.semver }}
           SEMVER: ${{ inputs.semver }}
 
       - name: Show images
