@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/informatievlaanderen/extract-bundler/compare/v3.0.0...v3.0.1) (2024-03-15)
+
+
+### Bug Fixes
+
+* **ci:** download artifact version same as upload ([925151d](https://github.com/informatievlaanderen/extract-bundler/commit/925151d5e33d87b5ee2d324b3fb79dbd9d1b9ee0))
+
 # [3.0.0](https://github.com/informatievlaanderen/extract-bundler/compare/v2.6.1...v3.0.0) (2024-03-15)
 
 
