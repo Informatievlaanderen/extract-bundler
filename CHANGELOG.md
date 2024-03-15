@@ -1,3 +1,15 @@
+# [3.0.0](https://github.com/informatievlaanderen/extract-bundler/compare/v2.6.1...v3.0.0) (2024-03-15)
+
+
+### Features
+
+* move to dotnet 8.0.2 ([34369b0](https://github.com/informatievlaanderen/extract-bundler/commit/34369b0a1676fd168570b8ffbb2626d3c8ca16f4))
+
+
+### BREAKING CHANGES
+
+* move to dotnet 8.0.2
+
 ## [2.6.1](https://github.com/informatievlaanderen/extract-bundler/compare/v2.6.0...v2.6.1) (2024-02-23)
 
 
