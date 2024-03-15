@@ -130,6 +130,7 @@ jobs:
       - name: Containerize
         shell: bash
         run: docker build . --no-cache --tag $TAG --build-arg BUILD_NUMBER=$SEMVER
+        working-directory: dist/${{ inputs.build-project }}/linux
         env:
           TAG: ${{ secrets.VBR_BUILD_DOCKER_REGISTRY_TST }}/${{ inputs.registry }}/${{ inputs.image-name }}:${{ inputs.semver }}
           SEMVER: ${{ inputs.semver }}
