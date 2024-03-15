@@ -248,18 +248,18 @@ jobs:
           ]
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1-node16
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.VBR_AWS_ACCESS_KEY_ID_DEVOPS }}
           aws-secret-access-key: ${{ secrets.VBR_AWS_SECRET_ACCESS_KEY_DEVOPS }}
           aws-region: ${{ secrets.VBR_AWS_REGION_PRD }}
 
       - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v1.5.3
+        uses: aws-actions/amazon-ecr-login@v2
 
       # Download artifact
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         continue-on-error: false
         with:
           name: ${{ matrix.image }}-${{ needs.release.outputs.version }}
@@ -299,18 +299,18 @@ jobs:
           ]
     steps:
       - name: Configure AWS credentials (Staging)
-        uses: aws-actions/configure-aws-credentials@v1-node16
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.VBR_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.VBR_AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.VBR_AWS_REGION_PRD }}
 
       - name: Login to Amazon ECR (Staging)
-        uses: aws-actions/amazon-ecr-login@v1.5.3
+        uses: aws-actions/amazon-ecr-login@v2
 
       # Download artifact
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         continue-on-error: false
         with:
           name: ${{ matrix.image }}-${{ needs.release.outputs.version }}
@@ -350,18 +350,18 @@ jobs:
           ]
     steps:
       - name: Configure AWS credentials (New Production)
-        uses: aws-actions/configure-aws-credentials@v1-node16
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.VBR_AWS_ACCESS_KEY_ID_NEWPRD }}
           aws-secret-access-key: ${{ secrets.VBR_AWS_SECRET_ACCESS_KEY_NEWPRD }}
           aws-region: ${{ secrets.VBR_AWS_REGION_PRD }}
 
       - name: Login to Amazon ECR (New Production)
-        uses: aws-actions/amazon-ecr-login@v1.5.3
+        uses: aws-actions/amazon-ecr-login@v2
 
       # Download artifact
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         continue-on-error: false
         with:
           name: ${{ matrix.image }}-${{ needs.release.outputs.version }}
@@ -402,7 +402,7 @@ jobs:
       shell: bash
 
     - name: Notify deployment started
-      uses: slackapi/slack-github-action@v1.23.0
+      uses: slackapi/slack-github-action@v1.25.0
       with:
         channel-id: '#team-dinosaur-dev'
         slack-message: Deployment of extract-bundler to test has started
@@ -458,7 +458,7 @@ jobs:
       shell: bash
 
     - name: Notify deployment finished
-      uses: slackapi/slack-github-action@v1.23.0
+      uses: slackapi/slack-github-action@v1.25.0
       with:
         channel-id: '#team-dinosaur-dev'
         slack-message: Deployment of extract-bundler to test has finished
@@ -480,7 +480,7 @@ jobs:
       shell: bash
 
     - name: Notify deployment started
-      uses: slackapi/slack-github-action@v1.23.0
+      uses: slackapi/slack-github-action@v1.25.0
       with:
         channel-id: '#team-dinosaur-dev'
         slack-message: Deployment of extract-bundler to staging has started
@@ -534,7 +534,7 @@ jobs:
       shell: bash
 
     - name: Notify deployment finished
-      uses: slackapi/slack-github-action@v1.23.0
+      uses: slackapi/slack-github-action@v1.25.0
       with:
         channel-id: '#team-dinosaur-dev'
         slack-message: Deployment of extract-bundler to staging has finished
