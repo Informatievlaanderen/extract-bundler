@@ -9,7 +9,8 @@ AWSSDK.Extensions.NETCore.Setup
 
 Be.Vlaanderen.Basisregisters.Aws.DistributedMutex
 Be.Vlaanderen.Basisregisters.BlobStore
-Be.Vlaanderen.Basisregisters.DataDog.Tracing.Autofac
+
+Datadog.Trace.Bundle
 
 Destructurama.JsonNet
 

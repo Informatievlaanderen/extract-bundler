@@ -3,11 +3,14 @@ framework: net8.0
 source https://api.nuget.org/v3/index.json
 
 nuget Autofac 8.0.0
+nuget Autofac.Extensions.DependencyInjection 9.0.0
 
 nuget Azure.Storage.Blobs 12.19.1
 
 nuget AWSSDK.S3 3.7.306
 nuget AWSSDK.Extensions.NETCore.Setup 3.7.300
+
+nuget Datadog.Trace.Bundle 2.49.0
 
 nuget Destructurama.JsonNet 3.0.0
 
@@ -28,7 +31,6 @@ nuget Serilog.Formatting.Compact 2.0.0
 nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 7.1.0
 nuget Be.Vlaanderen.Basisregisters.Aws.DistributedMutex 4.0.1
 nuget Be.Vlaanderen.Basisregisters.BlobStore 4.0.0
-nuget Be.Vlaanderen.Basisregisters.DataDog.Tracing.Autofac 6.0.0
 
 // TEST STUFF
 nuget Microsoft.NET.Test.Sdk 17.9.0

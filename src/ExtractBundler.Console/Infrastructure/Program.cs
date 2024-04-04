@@ -11,7 +11,6 @@ using Autofac.Extensions.DependencyInjection;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Be.Vlaanderen.Basisregisters.Aws.DistributedMutex;
-using Be.Vlaanderen.Basisregisters.DataDog.Tracing.Autofac;
 using Bundlers;
 using CloudStorageClients;
 using Configurations;
@@ -100,12 +99,9 @@ public sealed class Program
                 services.AddHostedService<ExtractBundleProcessor>();
             })
             .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-            .ConfigureContainer<ContainerBuilder>((hostContext, builder) =>
+            .ConfigureContainer<ContainerBuilder>((_, builder) =>
             {
                 var services = new ServiceCollection();
-                builder
-                    .RegisterModule(new DataDogModule(hostContext.Configuration));
-
                 builder.Populate(services);
             })
             .UseConsoleLifetime()
