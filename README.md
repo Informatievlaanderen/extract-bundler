@@ -48,6 +48,7 @@ The new version 1.2 of the European Union Public Licence (EUPL) is published in 
 * [Moq](https://github.com/devlooped/moq) - _The most popular and friendly mocking framework for .NET._ - [BSD](https://choosealicense.com/licenses/bsd-3-clause/)
 * [AWSSDK](https://github.com/aws/aws-sdk-net) - _The official AWS SDK for .NET._ - [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/)
 * [Azure](https://github.com/Azure/azure-sdk-for-net/tree/main) - _This repository is for active development of the Azure SDK for .NET._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [DataDog](https://github.com/DataDog/dd-trace-dotnet) - _.NET Client Library for Datadog APM_ - [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/)
 
 ### Tooling
 
@@ -67,6 +68,5 @@ The new version 1.2 of the European Union Public Licence (EUPL) is published in 
 ### Flemish Government Libraries
 
 * [Be.Vlaanderen.Basisregisters.Build.Pipeline](https://github.com/informatievlaanderen/build-pipeline/blob/master/LICENSE) - _Contains generic files for all Basisregisters pipelines._ - [MIT](https://choosealicense.com/licenses/mit/)
-* [Be.Vlaanderen.Basisregisters.DataDog](https://github.com/Informatievlaanderen/datadog-tracing) - _A C# Implementation of Data Dog Tracing._ - [MIT](https://choosealicense.com/licenses/mit/)
 * [Be.Vlaanderen.Basisregisters.Aws.DistributedMutex](https://github.com/Informatievlaanderen/aws-distributed-mutex) - _A distributed lock (mutex) implementation for AWS using DynamoDB._ - [MIT](https://choosealicense.com/licenses/mit/)
 * [Be.Vlaanderen.Basisregisters.BlobStore](https://github.com/Informatievlaanderen/blob-store) - _A blob store that provides a generic interface to blob storage._ - [EUPL-1.2](https://choosealicense.com/licenses/eupl-1.2/)
