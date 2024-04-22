@@ -1,6 +1,6 @@
 {
   "name": "extract-bundler",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Combines multiple extract files into one and puts them on S3 & Azure Blob.",
   "author": "Basisregisters Vlaanderen",
   "license": "MIT",
