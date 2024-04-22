@@ -23,9 +23,6 @@ namespace ExtractBundler.IntegrationTests
             //_dockerCompose = DockerComposer.Compose("docker-compose.yml", "extract-bundler-integration-tests");
             await WaitForContainerToBecomeAvailable();
 
-
-
-
             var hostBuilder = new WebHostBuilder()
                 .ConfigureAppConfiguration((hostContext, builder) =>
                 {
