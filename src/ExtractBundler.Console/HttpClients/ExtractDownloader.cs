@@ -6,6 +6,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon.Runtime.Internal;
 using Microsoft.Extensions.Logging;
 
 public sealed class ExtractDownloader : IDisposable
@@ -30,18 +31,20 @@ public sealed class ExtractDownloader : IDisposable
             var response = await _httpClient
                 .GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                using (var httpContent = response.Content)
-                {
-                    await using (var downloadStream = await httpContent.ReadAsStreamAsync(cancellationToken))
-                    {
-                        await contentStreamHandlerAsync(downloadStream, cancellationToken);
-                    }
-                }
-            }
+                response.EnsureSuccessStatusCode();
 
-            _logger?.LogCritical($"zipfile : {url}");
+                using var httpContent = response.Content;
+                await using var downloadStream = await httpContent.ReadAsStreamAsync(cancellationToken);
+                await contentStreamHandlerAsync(downloadStream, cancellationToken);
+
+                _logger?.LogInformation("Successfully downloaded from {url}", url);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger?.LogCritical(ex, $"zipfile : {url}");
+            }
         }
 
         _logger?.LogWarning("All zips have been downloaded");
