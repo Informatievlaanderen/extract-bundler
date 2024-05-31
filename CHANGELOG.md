@@ -1,3 +1,10 @@
+## [3.0.5](https://github.com/informatievlaanderen/extract-bundler/compare/v3.0.4...v3.0.5) (2024-05-31)
+
+
+### Bug Fixes
+
+* add better logging for httpclient ([a7b6d0e](https://github.com/informatievlaanderen/extract-bundler/commit/a7b6d0e9bd5900bb0bea39224c218ac939eddc63))
+
 ## [3.0.4](https://github.com/informatievlaanderen/extract-bundler/compare/v3.0.3...v3.0.4) (2024-04-22)
 
 
