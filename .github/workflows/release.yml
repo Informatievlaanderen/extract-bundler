@@ -268,108 +268,6 @@ jobs:
           SEMVER: ${{ needs.release.outputs.version }}
           WORKSPACE: ${{ github.workspace }}
 
-  push_images_to_staging:
-    if: needs.release.outputs.version != 'none'
-    needs: [ release ]
-    name: Push images to Staging
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        image: [
-          'extract-bundler'
-          ]
-    steps:
-      - name: Configure AWS credentials (Staging)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.VBR_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.VBR_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.VBR_AWS_REGION_PRD }}
-
-      - name: Login to Amazon ECR (Staging)
-        uses: aws-actions/amazon-ecr-login@v2
-
-      # Download artifact
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        continue-on-error: false
-        with:
-          name: ${{ matrix.image }}-${{ needs.release.outputs.version }}
-          path: ~/
-
-      # Load artifact
-      - name: Load artifact
-        shell: bash
-        run: |
-          echo $IMAGE-image.tar
-          docker image load -i ~/$IMAGE-image.tar
-        env:
-          IMAGE: ${{ matrix.image }}
-
-      - name: Push artifacts to ECR Staging
-        shell: bash
-        run: |
-          echo $IMAGE:$SEMVER
-          docker tag $BUILD_DOCKER_REGISTRY_TST/public-api/$IMAGE:$SEMVER $BUILD_DOCKER_REGISTRY/public-api/$IMAGE:$SEMVER
-          docker push $BUILD_DOCKER_REGISTRY/public-api/$IMAGE:$SEMVER
-        env:
-          BUILD_DOCKER_REGISTRY_TST: ${{ secrets.VBR_BUILD_DOCKER_REGISTRY_TST }}
-          BUILD_DOCKER_REGISTRY: ${{ secrets.VBR_BUILD_DOCKER_REGISTRY }}
-          IMAGE: ${{ matrix.image }}
-          SEMVER: ${{ needs.release.outputs.version }}
-          WORKSPACE: ${{ github.workspace }}
-
-  push_images_to_production:
-    if: needs.release.outputs.version != 'none'
-    needs: [ release ]
-    name: Push images to New Production
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        image: [
-            'extract-bundler'
-          ]
-    steps:
-      - name: Configure AWS credentials (New Production)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.VBR_AWS_ACCESS_KEY_ID_NEWPRD }}
-          aws-secret-access-key: ${{ secrets.VBR_AWS_SECRET_ACCESS_KEY_NEWPRD }}
-          aws-region: ${{ secrets.VBR_AWS_REGION_PRD }}
-
-      - name: Login to Amazon ECR (New Production)
-        uses: aws-actions/amazon-ecr-login@v2
-
-      # Download artifact
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        continue-on-error: false
-        with:
-          name: ${{ matrix.image }}-${{ needs.release.outputs.version }}
-          path: ~/
-
-      # Load artifact
-      - name: Load artifact
-        shell: bash
-        run: |
-          echo $IMAGE-image.tar
-          docker image load -i ~/$IMAGE-image.tar
-        env:
-          IMAGE: ${{ matrix.image }}
-
-      - name: Push artifacts to ECR New Production
-        shell: bash
-        run: |
-          echo $IMAGE:$SEMVER
-          docker tag $BUILD_DOCKER_REGISTRY_TST/public-api/$IMAGE:$SEMVER $BUILD_DOCKER_REGISTRY_NEWPRD/public-api/$IMAGE:$SEMVER
-          docker push $BUILD_DOCKER_REGISTRY_NEWPRD/public-api/$IMAGE:$SEMVER
-        env:
-          BUILD_DOCKER_REGISTRY_TST: ${{ secrets.VBR_BUILD_DOCKER_REGISTRY_TST }}
-          BUILD_DOCKER_REGISTRY_NEWPRD: ${{ secrets.VBR_BUILD_DOCKER_REGISTRY_NEWPRD }}
-          IMAGE: ${{ matrix.image }}
-          SEMVER: ${{ needs.release.outputs.version }}
-          WORKSPACE: ${{ github.workspace }}
-
   deploy_to_test_start_slack:
     if: github.repository_owner == 'Informatievlaanderen'
     needs: [ push_images ]
@@ -481,20 +379,22 @@ jobs:
           'extract-bundler'
           ]
     steps:
-    - name: CD services
+    - name: Deploy services
       env:
-        BUILD_URL: ${{ secrets.VBR_AWS_BUILD_API }}/${{matrix.services}}
-        STATUS_URL: ${{ secrets.VBR_AWS_BUILD_STATUS_API }}/${{matrix.services}}
+        BUILD_URL: ${{ vars.VBR_AWS_BUILD_API_DEVOPS }}/${{matrix.services}}
+        STATUS_URL: ${{ vars.VBR_AWS_BUILD_STATUS_API_DEVOPS }}/${{matrix.services}}
       uses: informatievlaanderen/awscurl-polling-action/polling-action@main
       with:
           environment: stg
           version: ${{ needs.release.outputs.version }}
           status-url: $STATUS_URL
           deploy-url: $BUILD_URL
-          access-key: ${{ secrets.VBR_AWS_BUILD_USER_ACCESS_KEY_ID }}
-          secret-key: ${{ secrets.VBR_AWS_BUILD_USER_SECRET_ACCESS_KEY }}
-          region: eu-west-1
+          access-key: ${{ secrets.VBR_AWS_ACCESS_KEY_ID_DEVOPS }}
+          secret-key: ${{ secrets.VBR_AWS_SECRET_ACCESS_KEY_DEVOPS }}
+          deploy-target: 'ecs_scheduled_task'
           interval: 2
+          domain: 'basisregisters'
+          project: 'basisregisters'
 
     - name: output CD services
       shell: bash
