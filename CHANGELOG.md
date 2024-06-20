@@ -1,3 +1,10 @@
+## [3.0.6](https://github.com/informatievlaanderen/extract-bundler/compare/v3.0.5...v3.0.6) (2024-06-20)
+
+
+### Bug Fixes
+
+* **ci:** deploy to new stg ([dc18f1d](https://github.com/informatievlaanderen/extract-bundler/commit/dc18f1dd3cbf61abff2211533b826232bbddb909))
+
 ## [3.0.5](https://github.com/informatievlaanderen/extract-bundler/compare/v3.0.4...v3.0.5) (2024-05-31)
 
 
