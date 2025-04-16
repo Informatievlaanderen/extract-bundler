@@ -112,7 +112,7 @@ jobs:
 
     - name: Login to Amazon ECR (Test)
       if: env.RELEASE_VERSION != 'none'
-      uses: aws-actions/amazon-ecr-login@v1.3.3
+      uses: aws-actions/amazon-ecr-login@v1.7.1
 
     - name: Push to Test
       if: env.RELEASE_VERSION != 'none'
