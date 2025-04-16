@@ -2,7 +2,7 @@ version: '3.8'
 services:
 
   wiremock_municipality-registry:
-    image: rodolpheche/wiremock:2.29.1
+    image: rodolpheche/wiremock:2.31.0
     container_name: extractbundler.wiremock.municipality-registry
     volumes:
       - .docker-volumes/wiremock/mappings/municipality-registry:/home/wiremock/mappings
@@ -11,7 +11,7 @@ services:
       - 19204:8080
 
   wiremock_postal-registry:
-    image: rodolpheche/wiremock:2.29.1
+    image: rodolpheche/wiremock:2.31.0
     container_name: extractbundler.wiremock.postal-registry
     volumes:
       - .docker-volumes/wiremock/mappings/postal-registry:/home/wiremock/mappings
@@ -20,7 +20,7 @@ services:
       - 19304:8080
 
   wiremock_streetname-registry:
-    image: rodolpheche/wiremock:2.29.1
+    image: rodolpheche/wiremock:2.31.0
     container_name: extractbundler.wiremock.streetname-registry
     volumes:
       - .docker-volumes/wiremock/mappings/streetname-registry:/home/wiremock/mappings
@@ -29,7 +29,7 @@ services:
       - 19404:8080
 
   wiremock_address-registry:
-    image: rodolpheche/wiremock:2.29.1
+    image: rodolpheche/wiremock:2.31.0
     container_name: extractbundler.wiremock.address-registry
     volumes:
       - .docker-volumes/wiremock/mappings/address-registry:/home/wiremock/mappings
@@ -38,7 +38,7 @@ services:
       - 19504:8080
 
   wiremock_building-registry:
-    image: rodolpheche/wiremock:2.29.1
+    image: rodolpheche/wiremock:2.31.0
     container_name: extractbundler.wiremock.building-registry
     volumes:
       - .docker-volumes/wiremock/mappings/building-registry:/home/wiremock/mappings
@@ -47,7 +47,7 @@ services:
       - 19604:8080
 
   wiremock_parcel-registry:
-    image: rodolpheche/wiremock:2.29.1
+    image: rodolpheche/wiremock:2.31.0
     container_name: extractbundler.wiremock.parcel-registry
     volumes:
       - .docker-volumes/wiremock/mappings/parcel-registry:/home/wiremock/mappings
@@ -56,7 +56,7 @@ services:
       - 19704:8080
 
   wiremock_public-api:
-    image: rodolpheche/wiremock:2.29.1
+    image: rodolpheche/wiremock:2.31.0
     container_name: extractbundler.wiremock.public-api
     volumes:
       - .docker-volumes/wiremock/mappings/public-api:/home/wiremock/mappings
@@ -65,7 +65,7 @@ services:
       - 19928:8080
 
   wiremock_metadatacenter:
-    image: rodolpheche/wiremock:2.29.1
+    image: rodolpheche/wiremock:2.31.0
     container_name: extractbundler.wiremock.metadatacenter
     volumes:
       - .docker-volumes/wiremock/mappings/metadatacenter:/home/wiremock/mappings
