@@ -45,11 +45,11 @@ jobs:
       - name: Remove old docker containers
         run: docker container ls -a --filter "name=extractbundler*" --format "{{.ID}}" | awk 'NR>1' | xargs --no-run-if-empty docker container rm
         shell: bash
-  
+
       - name: Remove old docker volumes
         run: docker volume ls | grep extract-bundler | awk '{print $2}' | xargs --no-run-if-empty docker volume rm || true
         shell: bash
-  
+
       - name: Remove ol docker network
         run: docker network ls | grep extract-bundler | awk 'NR>0 {print $2}' | xargs --no-run-if-empty docker network rm || true
         shell: bash
@@ -76,7 +76,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ vars.VBR_DOTNET_VERSION_8 }}
+          dotnet-version: ${{ vars.VBR_DOTNET_VERSION_9 }}
 
       - name: .NET version
         shell: bash
@@ -85,15 +85,9 @@ jobs:
       - name: Restore dotnet tools
         shell: bash
         run: |
+          ./pre-restore.sh
           dotnet tool restore
-
-      - name: Paket install
-        shell: bash
-        run: dotnet paket install
-
-      - name: Paket restore
-        shell: bash
-        run: dotnet paket restore
+          dotnet restore --locked-mode
 
       - name: Dotnet restore tests
         shell: bash
@@ -119,7 +113,7 @@ jobs:
           COPYRIGHT: "Copyright \\(c\\) Vlaamse overheid"
           PRODUCT: "Basisregisters Vlaanderen"
           COMPANY: "Vlaamse overheid"
-          GIT_HASH: ${{ github.sha }}        
+          GIT_HASH: ${{ github.sha }}
 
       - name: Dotnet publish
         shell: bash

@@ -1,6 +1,5 @@
 namespace ExtractBundler.Console.Bundlers;
 
-using Amazon.Runtime.Internal.Util;
 using CloudStorageClients;
 using HttpClients;
 using Infrastructure.Configurations;

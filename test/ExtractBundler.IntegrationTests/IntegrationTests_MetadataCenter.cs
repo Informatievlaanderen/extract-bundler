@@ -22,7 +22,7 @@ public partial class IntegrationTests
 
         // Test response
         var actualCswPublicationResponse =
-            (await metaDataCenterHttpClient!.UpdateCswPublication(Identifier.StreetName, DateTime.Now)).ToString();
+            (await metaDataCenterHttpClient!.UpdateCswPublication(Identifier.StreetName, DateTime.Now))!.ToString();
         actualCswPublicationResponse = actualCswPublicationResponse.Replace("\r\n", "\n");
         var xmlMetaDataString = await metaDataCenterHttpClient.GetXmlAsString(Identifier.StreetName);
 

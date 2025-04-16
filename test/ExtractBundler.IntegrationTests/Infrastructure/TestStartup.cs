@@ -23,8 +23,8 @@ public class TestStartup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        var s3Options = _configuration.GetSection(nameof(S3Options)).Get<S3Options>();
-        var azureOptions = _configuration.GetSection(nameof(AzureBlobOptions)).Get<AzureBlobOptions>();
+        var s3Options = _configuration.GetSection(nameof(S3Options)).Get<S3Options>()!;
+        var azureOptions = _configuration.GetSection(nameof(AzureBlobOptions)).Get<AzureBlobOptions>()!;
 
         services.AddScoped<FullBundler>()
             .AddScoped<StreetNameBundler>()
