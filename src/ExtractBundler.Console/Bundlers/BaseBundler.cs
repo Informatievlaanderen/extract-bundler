@@ -177,11 +177,11 @@ public abstract class BaseBundler : IDisposable
             if (disposing)
             {
                 // Dispose managed resources.
-                _s3ZipArchive?.Dispose();
-                _azureZipArchive?.Dispose();
-                _s3ZipArchiveStream?.Dispose();
-                _azureZipArchiveStream?.Dispose();
-                _extractDownloader?.Dispose();
+                _s3ZipArchive.Dispose();
+                _azureZipArchive.Dispose();
+                _s3ZipArchiveStream.Dispose();
+                _azureZipArchiveStream.Dispose();
+                _extractDownloader.Dispose();
             }
 
             _disposed = true;

@@ -19,7 +19,7 @@ public static class FileExtensions
             return;
         }
 
-        var destination = destinationZipArchive!.CreateEntry(fileName ?? source.FullName, CompressionLevel.Fastest);
+        var destination = destinationZipArchive.CreateEntry(fileName ?? source.FullName, CompressionLevel.Fastest);
         await using var sourceEntryStream = source.Open();
         await using var destEntryStream = destination.Open();
         await sourceEntryStream.CopyToAsync(destEntryStream, cancellationToken);

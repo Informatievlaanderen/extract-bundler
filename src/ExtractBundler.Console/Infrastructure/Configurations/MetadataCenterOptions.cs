@@ -2,13 +2,13 @@ namespace ExtractBundler.Console.Infrastructure.Configurations;
 
 public class MetadataCenterOptions
 {
-    public string FullIdentifier { get; set; }
-    public string StreetNameIdentifier { get; set; }
-    public string AddressIdentifier { get; set; }
-    public string AddressLinksIdentifier { get; set; }
-    public string BaseUrl { get; set; }
+    public required string FullIdentifier { get; set; }
+    public required string StreetNameIdentifier { get; set; }
+    public required string AddressIdentifier { get; set; }
+    public required string AddressLinksIdentifier { get; set; }
+    public required string BaseUrl { get; set; }
 
-    public string ClientId { get; set; }
-    public string ClientSecret { get; set; }
-    public string TokenEndPoint { get; set; }
+    public required string ClientId { get; set; }
+    public required string ClientSecret { get; set; }
+    public required string TokenEndPoint { get; set; }
 }

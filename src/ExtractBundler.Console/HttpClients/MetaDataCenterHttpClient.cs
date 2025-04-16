@@ -6,13 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Authentication;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using IdentityModel;
-using IdentityModel.Client;
 using Infrastructure.Configurations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -66,7 +64,7 @@ public sealed class MetaDataCenterHttpClient
 	</csw:Update>
 </csw:Transaction>
 "));
-        body.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/xml");
+        body.Headers.ContentType = MediaTypeHeaderValue.Parse("application/xml");
         return body;
     }
 
@@ -128,7 +126,7 @@ public sealed class MetaDataCenterHttpClient
         }
         catch (Exception ex)
         {
-            _logger?.LogCritical("Unable to retrieve XSRF-TOKEN", ex);
+            _logger?.LogCritical(ex, "Unable to retrieve XSRF-TOKEN");
         }
 
         return xsrfToken;
@@ -167,11 +165,11 @@ public sealed class MetaDataCenterHttpClient
             response = await httpClient.SendAsync(requestMessage, cancellationToken).ConfigureAwait(false);
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                _logger?.LogCritical("Unable to update CswPublication", response);
+                _logger?.LogCritical("Unable to update CswPublication {0}", response);
                 await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
                 retry++;
                 if(retry == 10) {
-                    throw new ArgumentNullException("Unable to update CswPublication");
+                    throw new InvalidOperationException("Unable to update CswPublication");
                 }
                 continue;
             }
@@ -200,7 +198,7 @@ public sealed class MetaDataCenterHttpClient
         if (response.StatusCode != HttpStatusCode.OK)
         {
             _logger?.LogCritical("Unable to get XML");
-            throw new ArgumentNullException("Unable to get XML");
+            throw new ArgumentException("Unable to get XML");
         }
 
         return await response.Content.ReadAsStringAsync(cancellationToken);
@@ -226,7 +224,7 @@ public sealed class MetaDataCenterHttpClient
         if (response.StatusCode != HttpStatusCode.OK)
         {
             _logger?.LogCritical("Unable to get pdf");
-            throw new ArgumentNullException("MetaDataCenterHttpClient.GetPdfAsByteArray", "Unable to get pdf");
+            throw new InvalidOperationException("Unable to get pdf in MetaDataCenterHttpClient.GetPdfAsByteArray");
         }
 
         var pdf = await response.Content.ReadAsByteArrayAsync(cancellationToken);

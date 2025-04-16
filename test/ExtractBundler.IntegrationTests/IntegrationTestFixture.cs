@@ -15,8 +15,8 @@ namespace ExtractBundler.IntegrationTests
 
     public class IntegrationTestFixture : IAsyncLifetime
     {
-        private ICompositeService _dockerCompose;
-        public TestServer TestServer { get; private set; }
+        private ICompositeService? _dockerCompose;
+        public TestServer TestServer { get; private set; } = null!;
 
         public async Task InitializeAsync()
         {
@@ -51,7 +51,7 @@ namespace ExtractBundler.IntegrationTests
             await Task.Run(() => _dockerCompose?.Stop());
         }
 
-        private async Task WaitForContainerToBecomeAvailable()
+        private static async Task WaitForContainerToBecomeAvailable()
         {
             foreach (var _ in Enumerable.Range(0, 60))
             {

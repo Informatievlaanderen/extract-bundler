@@ -32,13 +32,13 @@ public sealed class Program
 
     public static async Task Main(string[] args)
     {
-        AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
+        AppDomain.CurrentDomain.FirstChanceException += (_, eventArgs) =>
             Log.Debug(
                 eventArgs.Exception,
                 "FirstChanceException event raised in {AppDomain}.",
                 AppDomain.CurrentDomain.FriendlyName);
 
-        AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+        AppDomain.CurrentDomain.UnhandledException += (_, eventArgs) =>
             Log.Fatal((Exception)eventArgs.ExceptionObject, "Encountered a fatal exception, exiting program.");
 
         Log.Information("Starting Upload Processor.");
@@ -77,9 +77,9 @@ public sealed class Program
             })
             .ConfigureServices((hostContext, services) =>
             {
-                var s3Options = hostContext.Configuration.GetSection(nameof(S3Options)).Get<S3Options>();
+                var s3Options = hostContext.Configuration.GetSection(nameof(S3Options)).Get<S3Options>()!;
                 var azureOptions = hostContext.Configuration.GetSection(nameof(AzureBlobOptions))
-                    .Get<AzureBlobOptions>();
+                    .Get<AzureBlobOptions>()!;
                 services
                     .AddScoped<FullBundler>()
                     .AddScoped<StreetNameBundler>()
@@ -151,7 +151,7 @@ public static class ServiceCollectionExtensions
 
         if (!isDevelopment)
         {
-            return services.AddSingleton<IAmazonS3>(i => new AmazonS3Client(
+            return services.AddSingleton<IAmazonS3>(_ => new AmazonS3Client(
                 new AmazonS3Config
                 {
                     RegionEndpoint = RegionEndpoint.GetBySystemName(options.Region)
@@ -161,7 +161,7 @@ public static class ServiceCollectionExtensions
         //Development mode without minio
         if (!options.IsMinio)
         {
-            return services.AddSingleton<IAmazonS3>(i => new AmazonS3Client(
+            return services.AddSingleton<IAmazonS3>(_ => new AmazonS3Client(
                 new BasicAWSCredentials(options.AccessKey,
                     options.AccessSecret),
                 new AmazonS3Config
@@ -171,7 +171,7 @@ public static class ServiceCollectionExtensions
         }
 
         //Development mode with minio
-        return services.AddSingleton<IAmazonS3>(i => new AmazonS3Client(
+        return services.AddSingleton<IAmazonS3>(_ => new AmazonS3Client(
             new BasicAWSCredentials(options.AccessKey,
                 options.AccessSecret),
             new AmazonS3Config
@@ -187,12 +187,12 @@ public static class ServiceCollectionExtensions
     {
         if (options.IsAzurite)
         {
-            return services.AddSingleton(i => new BlobServiceClient(
+            return services.AddSingleton(_ => new BlobServiceClient(
                 options.ConnectionString,
                 new BlobClientOptions(BlobClientOptions.ServiceVersion.V2020_04_08)));
         }
 
-        return services.AddSingleton(i => new BlobServiceClient(
+        return services.AddSingleton(_ => new BlobServiceClient(
             new Uri(options.BaseUrl),
             new ClientSecretCredential(options.TenantId, options.ClientKey, options.ClientSecret),
             new BlobClientOptions(BlobClientOptions.ServiceVersion.V2020_04_08)));
