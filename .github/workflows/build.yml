@@ -32,7 +32,7 @@ jobs:
     # only available for Test
     # Docs https://github.com/marketplace/actions/docker-compose-action
     - name: docker-compose
-      uses: isbang/compose-action@v1.5.1
+      uses: isbang/compose-action@v2.2.0
       with:
         compose-file: "./docker-compose.yml"
 
