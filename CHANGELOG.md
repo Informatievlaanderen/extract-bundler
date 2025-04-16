@@ -1,3 +1,15 @@
+# [4.0.0](https://github.com/informatievlaanderen/extract-bundler/compare/v3.0.6...v4.0.0) (2025-04-16)
+
+
+### Code Refactoring
+
+* use renovate and nuget + update pipeline ([0539cc9](https://github.com/informatievlaanderen/extract-bundler/commit/0539cc95c967ff6a337b5ca3ab16249b0eedd81d))
+
+
+### BREAKING CHANGES
+
+* update to dotnet 9
+
 ## [3.0.6](https://github.com/informatievlaanderen/extract-bundler/compare/v3.0.5...v3.0.6) (2024-06-20)
 
 
