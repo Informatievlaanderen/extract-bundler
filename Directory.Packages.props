@@ -17,7 +17,7 @@
         <PackageVersion Include="Be.Vlaanderen.Basisregisters.Aws.DistributedMutex" Version="5.0.0" />
         <PackageVersion Include="Be.Vlaanderen.Basisregisters.BlobStore" Version="5.0.0" />
 
-        <PackageVersion Include="Datadog.Trace.Bundle" Version="3.14.3" />
+        <PackageVersion Include="Datadog.Trace.Bundle" Version="3.16.0" />
 
         <PackageVersion Include="Destructurama.JsonNet" Version="4.0.2" />
 
