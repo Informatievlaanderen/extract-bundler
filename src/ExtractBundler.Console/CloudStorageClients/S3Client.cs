@@ -5,6 +5,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Amazon.S3;
+    using Amazon.S3.Model;
     using Amazon.S3.Transfer;
     using Infrastructure.Configurations;
     using Microsoft.Extensions.Logging;
@@ -50,6 +51,19 @@
                     _logger.LogError("Unknown encountered on server. Message:'{e.Message}' when writing an object", e);
                 }
             }
+        }
+
+        public async Task<bool> DoesBlobExists(Identifier identifier, CancellationToken cancellationToken)
+        {
+            var obj = await _amazonS3.ListObjectsV2Async(new ListObjectsV2Request
+                {
+                    BucketName = _options.BucketName,
+                    Prefix = identifier.GetValue(ZipKey.S3Zip),
+                    MaxKeys = 1
+                },
+                cancellationToken);
+
+            return obj.KeyCount > 0;
         }
 
         public async Task<byte[]?> GetZipArchiveInBytesFromS3Async(Identifier identifier,

@@ -5,14 +5,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Autofac.Core;
+using Be.Vlaanderen.Basisregisters.GrAr.Notifications;
 using Console.Bundlers;
 using Console.CloudStorageClients;
 using Console.Infrastructure.Configurations;
+using Console.Processors;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Moq;
 using Xunit;
 
 public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
@@ -22,10 +26,11 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
     private readonly S3Client _s3Client;
     private readonly AzureBlobClient _azureBlobClient;
     private readonly AzureBlobOptions _azureOptions;
-    private readonly AddressBundler addressBundler;
-    private readonly AddressLinksBundler addressLinksBundler;
-    private readonly StreetNameBundler streetNameBundler;
-    private readonly FullBundler fullBundler;
+    private readonly AddressBundler _addressBundler;
+    private readonly AddressLinksBundler _addressLinksBundler;
+    private readonly StreetNameBundler _streetNameBundler;
+    private readonly FullBundler _fullBundler;
+    private readonly ExtractVerifier _extractVerifier;
 
 
     public IntegrationTests(IntegrationTestFixture fixture)
@@ -36,17 +41,19 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
         _s3Client = _fixture.TestServer.Services.GetService<S3Client>()!;
         _azureBlobClient = _fixture.TestServer.Services.GetService<AzureBlobClient>()!;
         _azureOptions = _fixture.TestServer.Services.GetService<IOptions<AzureBlobOptions>>()!.Value;
-        addressBundler = _fixture.TestServer.Services.GetService<AddressBundler>()!;
-        addressLinksBundler = _fixture.TestServer.Services.GetService<AddressLinksBundler>()!;
-        streetNameBundler = _fixture.TestServer.Services.GetService<StreetNameBundler>()!;
-        fullBundler = _fixture.TestServer.Services.GetService<FullBundler>()!;
+        _addressBundler = _fixture.TestServer.Services.GetService<AddressBundler>()!;
+        _addressLinksBundler = _fixture.TestServer.Services.GetService<AddressLinksBundler>()!;
+        _streetNameBundler = _fixture.TestServer.Services.GetService<StreetNameBundler>()!;
+        _fullBundler = _fixture.TestServer.Services.GetService<FullBundler>()!;
+        _extractVerifier = _fixture.TestServer.Services.GetService<ExtractVerifier>()!;
     }
 
     [Fact]
     private async Task Bundler_Should_Upload_To_S3_And_Azure()
     {
         //Act
-        await Task.WhenAll(streetNameBundler.Start(), addressBundler.Start(), addressLinksBundler.Start(), fullBundler.Start());
+        await Task.WhenAll(_streetNameBundler.Start(), _addressBundler.Start(), _addressLinksBundler.Start(), _fullBundler.Start());
+        await _extractVerifier.Verify(CancellationToken.None);
 
         //Assert
 
@@ -54,6 +61,9 @@ public partial class IntegrationTests : IClassFixture<IntegrationTestFixture>
         await Assert_AddressLinksBundler_Should_UploadToS3AndAzure();
         await Assert_StreetNameBundler_Should_UploadToS3AndAzure();
         await Assert_FullBundler_Should_UploadToS3AndAzure();
+
+        var verify = _fixture.TestServer.Services.GetRequiredService<Mock<INotificationService>>();
+        verify.Verify(x => x.PublishToTopicAsync(It.IsAny<NotificationMessage>()), Times.Never);
     }
 
     private async Task Assert_FullBundler_Should_UploadToS3AndAzure()
