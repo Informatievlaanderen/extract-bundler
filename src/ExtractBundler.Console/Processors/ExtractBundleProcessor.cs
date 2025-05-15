@@ -1,11 +1,12 @@
 namespace ExtractBundler.Console.Processors;
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Bundlers;
+using Infrastructure.Configurations;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 public class ExtractBundleProcessor : BackgroundService
 {
@@ -15,12 +16,14 @@ public class ExtractBundleProcessor : BackgroundService
     private readonly AddressBundler addressBundler;
     private readonly AddressLinksBundler addressLinksBundler;
     private readonly FullBundler _fullBundler;
+    private readonly ExtractVerifier _extractVerifier;
 
     public ExtractBundleProcessor(
         StreetNameBundler streetNameBundler,
         AddressBundler addressBundler,
         AddressLinksBundler addressLinksBundler,
         FullBundler fullBundler,
+        ExtractVerifier extractVerifier,
         ILoggerFactory loggerFactory,
         IHostApplicationLifetime hostApplicationLifetime)
     {
@@ -28,6 +31,7 @@ public class ExtractBundleProcessor : BackgroundService
         this.addressBundler = addressBundler;
         this.addressLinksBundler = addressLinksBundler;
         _fullBundler = fullBundler;
+        _extractVerifier = extractVerifier;
         _hostApplicationLifetime = hostApplicationLifetime;
         _logger = loggerFactory.CreateLogger<ExtractBundleProcessor>();
     }
@@ -46,7 +50,12 @@ public class ExtractBundleProcessor : BackgroundService
         await _fullBundler.Start(stoppingToken);
         _fullBundler.Dispose();
 
-        _logger.LogWarning("Zips complete. See you later alligator!");
+        _logger.LogWarning("Zips complete. Verifying uploads...");
+
+        await _extractVerifier.Verify(stoppingToken);
+
+        _logger.LogWarning("All verified. See you later alligator!");
+
         _hostApplicationLifetime.StopApplication();
     }
 }

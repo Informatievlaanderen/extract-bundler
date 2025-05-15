@@ -2,15 +2,18 @@ namespace ExtractBundler.Console.Infrastructure;
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
+using Amazon.SimpleNotificationService;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Be.Vlaanderen.Basisregisters.Aws.DistributedMutex;
+using Be.Vlaanderen.Basisregisters.GrAr.Notifications;
 using Bundlers;
 using CloudStorageClients;
 using Configurations;
@@ -91,18 +94,24 @@ public sealed class Program
                     .AddSingleton<ITokenProvider, TokenProvider>()
                     .AddSingleton<S3Client>()
                     .AddSingleton<AzureBlobClient>()
+                    .AddSingleton<ExtractVerifier>()
                     .Configure<S3Options>(hostContext.Configuration.GetSection(nameof(S3Options)))
                     .Configure<AzureBlobOptions>(hostContext.Configuration.GetSection(nameof(AzureBlobOptions)))
                     .Configure<BundlerOptions>(hostContext.Configuration.GetSection(nameof(BundlerOptions)))
                     .Configure<MetadataCenterOptions>(
                         hostContext.Configuration.GetSection(nameof(MetadataCenterOptions)));
+
+                services.AddAWSService<IAmazonSimpleNotificationService>();
+                services.AddSingleton<INotificationService>(sp =>
+                    new NotificationService(sp.GetRequiredService<IAmazonSimpleNotificationService>(),
+                        hostContext.Configuration.GetValue<string>("TopicArn")!));
+
                 services.AddHostedService<ExtractBundleProcessor>();
             })
             .UseServiceProviderFactory(new AutofacServiceProviderFactory())
             .ConfigureContainer<ContainerBuilder>((_, builder) =>
             {
-                var services = new ServiceCollection();
-                builder.Populate(services);
+                builder.Populate(new ServiceCollection());
             })
             .UseConsoleLifetime()
             .Build();
@@ -127,11 +136,18 @@ public sealed class Program
         }
         catch (Exception e)
         {
+            host.Services.GetRequiredService<INotificationService>()
+                .PublishToTopicAsync(new NotificationMessage(
+                    "ExtractBundler",
+                    "Fatal error in extract bundler!",
+                    "Extract Bundler",
+                    NotificationSeverity.Danger)).GetAwaiter().GetResult();
+
             logger.LogCritical(e, "Encountered a fatal exception, exiting program.");
-            Log.CloseAndFlush();
+            await Log.CloseAndFlushAsync();
 
             // Allow some time for flushing before shutdown.
-            await Task.Delay(500, default);
+            await Task.Delay(500, CancellationToken.None);
             throw;
         }
         finally
@@ -147,7 +163,6 @@ public static class ServiceCollectionExtensions
     {
         bool isDevelopment = !string.IsNullOrWhiteSpace(options.AccessKey) &&
                              !string.IsNullOrWhiteSpace(options.AccessSecret);
-
 
         if (!isDevelopment)
         {
