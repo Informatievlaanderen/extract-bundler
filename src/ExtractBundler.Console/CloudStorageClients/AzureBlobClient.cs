@@ -77,10 +77,10 @@ namespace ExtractBundler.Console.CloudStorageClients
                 }, cancellationToken);
         }
 
-        public async Task<IEnumerable<Tuple<string, string, long?>>> ListBlobsAsync(
+        public async Task<IEnumerable<Tuple<string, string, long?, DateTimeOffset?>>> ListBlobsAsync(
             CancellationToken cancellationToken = default)
         {
-            var blobItems = new List<Tuple<string, string, long?>>();
+            var blobItems = new List<Tuple<string, string, long?, DateTimeOffset?>>();
             try
             {
                 await foreach (var blobItem in _containerClient.GetBlobsAsync(cancellationToken: cancellationToken))
@@ -89,8 +89,9 @@ namespace ExtractBundler.Console.CloudStorageClients
                     var name = blobItem.Name;
                     var type = blobItem.Properties.ContentType;
                     var size = blobItem.Properties.ContentLength;
+                    var lastModified = blobItem.Properties.LastModified;
 
-                    blobItems.Add(Tuple.Create(name, type, size));
+                    blobItems.Add(Tuple.Create(name, type, size, lastModified));
                 }
             }
             catch (RequestFailedException ex)
