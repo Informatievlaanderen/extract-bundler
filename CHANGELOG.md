@@ -1,3 +1,10 @@
+# [4.1.0](https://github.com/informatievlaanderen/extract-bundler/compare/v4.0.0...v4.1.0) (2025-05-23)
+
+
+### Features
+
+* add notifications ([bd217f2](https://github.com/informatievlaanderen/extract-bundler/commit/bd217f2d5208eb8f7adaba9a8b5ecaacc16a56ad))
+
 # [4.0.0](https://github.com/informatievlaanderen/extract-bundler/compare/v3.0.6...v4.0.0) (2025-04-16)
 
 
