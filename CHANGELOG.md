@@ -1,3 +1,10 @@
+## [4.1.1](https://github.com/informatievlaanderen/extract-bundler/compare/v4.1.0...v4.1.1) (2025-10-28)
+
+
+### Bug Fixes
+
+* **build:** bump docker image + update certs ([2cf721a](https://github.com/informatievlaanderen/extract-bundler/commit/2cf721a2ad47dfd20370c18716f4e7c8dbe8ee69))
+
 # [4.1.0](https://github.com/informatievlaanderen/extract-bundler/compare/v4.0.0...v4.1.0) (2025-05-23)
 
 
