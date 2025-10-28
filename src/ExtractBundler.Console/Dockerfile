@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/runtime-deps:9.0.4-bookworm-slim-amd64
+FROM mcr.microsoft.com/dotnet/runtime-deps:9.0.9-bookworm-slim-amd64
 
 # create work dir and set permissions as WORKDIR sets permissions as root
 RUN mkdir /app && chown -R app:app /app
@@ -11,9 +11,11 @@ COPY / /app
 WORKDIR /app
 
 RUN apt-get update && \
-    apt-get install curl jq -y && \
-    chmod +x ./init.sh && \
-    apt-get clean
+    apt-get upgrade -y ca-certificates && \
+    apt-get install curl jq openssl ca-certificates -y && \
+    c_rehash /etc/ssl/certs && \
+    update-ca-certificates --fresh --verbose && \
+    chmod +x ./init.sh
 
 ENV CORECLR_ENABLE_PROFILING=1
 ENV CORECLR_PROFILER={846F5F1C-F9AE-4B07-969E-05C26BC060D8}
