@@ -24,7 +24,10 @@
             _logger = loggerFactory.CreateLogger<S3Client>();
         }
 
-        public async Task UploadBlobInChunksAsync(MemoryStream stream, Identifier identifier,
+        public async Task UploadBlobInChunksAsync(
+            MemoryStream stream,
+            Identifier identifier,
+            bool isGeoPackage = false,
             CancellationToken token = default)
         {
             using (var transferUtility = new TransferUtility(_amazonS3))
@@ -35,7 +38,9 @@
                     var request = new TransferUtilityUploadRequest()
                     {
                         BucketName = _options.BucketName,
-                        Key = identifier.GetValue(ZipKey.S3Zip),
+                        Key = isGeoPackage
+                            ? identifier.GetValue(ZipKey.AzureGeoPackageZip)
+                            : identifier.GetValue(ZipKey.S3Zip),
                         InputStream = stream,
                         ContentType = "application/octet-stream",
                         AutoCloseStream = false,

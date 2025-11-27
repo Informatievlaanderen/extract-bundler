@@ -15,6 +15,7 @@ public class BundlerOptionItem
 {
     public required string Urls { get; set; }
     public bool Enabled { get; set; }
+    public bool GeopackageEnabled { get; set; }
 
     public IEnumerable<string> UrlsToList()
     {

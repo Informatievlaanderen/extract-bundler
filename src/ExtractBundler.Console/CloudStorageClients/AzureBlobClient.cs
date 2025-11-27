@@ -31,10 +31,12 @@ namespace ExtractBundler.Console.CloudStorageClients
             }
         }
 
-        private string GetBlobName(Identifier identifier)
+        private string GetBlobName(Identifier identifier, bool isGeoPackage)
         {
             var isTest = _options.IsTest;
-            var blobName = identifier.GetValue(ZipKey.AzureZip);
+            var blobName = isGeoPackage
+                ? identifier.GetValue(ZipKey.AzureGeoPackageZip)
+                : identifier.GetValue(ZipKey.AzureZip);
             if (identifier == Identifier.Full)
             {
                 return isTest ? $"31086/{blobName}" : $"10142/{blobName}";
@@ -61,10 +63,11 @@ namespace ExtractBundler.Console.CloudStorageClients
         public async Task UploadBlobInChunksAsync(
             MemoryStream sourceStream,
             Identifier identifier,
+            bool isGeoPackage = false,
             CancellationToken cancellationToken = default)
         {
             sourceStream.Seek(0, SeekOrigin.Begin);
-            var blobName = GetBlobName(identifier);
+            var blobName = GetBlobName(identifier, isGeoPackage);
             BlockBlobClient blobClient = _containerClient.GetBlockBlobClient(blobName);
             await blobClient.UploadAsync(
                 sourceStream,

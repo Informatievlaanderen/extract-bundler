@@ -1,8 +1,10 @@
 namespace ExtractBundler.Console.Bundlers;
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudStorageClients;
@@ -66,31 +68,174 @@ public abstract class BaseBundler : IDisposable
             cancellationToken);
         _extractDownloader.Dispose();
         _s3ZipArchive.Dispose();
-        await _s3Client.UploadBlobInChunksAsync(_s3ZipArchiveStream, GetIdentifier(), cancellationToken);
+        await _s3Client.UploadBlobInChunksAsync(_s3ZipArchiveStream, GetIdentifier(), isGeoPackage: false,
+            cancellationToken);
         _logger.LogWarning("Upload to S3 Blob completed.");
 
         if (!_azureOptions.Enabled)
         {
             await _s3ZipArchiveStream.DisposeAsync();
             _disposed = true;
-            return;
         }
+        else
+        {
+            _s3ZipArchiveStream.Seek(0, SeekOrigin.Begin);
+            await AddToAzureZipArchiveAsync(_s3ZipArchiveStream, cancellationToken).ConfigureAwait(false);
+            await AddAdditionalFilesToAzureZipArchiveAsync(cancellationToken).ConfigureAwait(false);
+            await _s3ZipArchiveStream.DisposeAsync();
+            _azureZipArchive.Dispose();
 
-        _s3ZipArchiveStream.Seek(0, SeekOrigin.Begin);
-        await AddToAzureZipArchiveAsync(_s3ZipArchiveStream, cancellationToken).ConfigureAwait(false);
-        await AddAdditionalFilesToAzureZipArchiveAsync(cancellationToken).ConfigureAwait(false);
-        await _s3ZipArchiveStream.DisposeAsync();
-        _azureZipArchive.Dispose();
+            await _azureBlobClient.UploadBlobInChunksAsync(
+                _azureZipArchiveStream,
+                GetIdentifier(),
+                isGeoPackage: false,
+                cancellationToken);
 
-        await _azureBlobClient.UploadBlobInChunksAsync(
-            _azureZipArchiveStream,
-            GetIdentifier(),
-            cancellationToken);
-        await _azureZipArchiveStream.DisposeAsync();
+            if (_bundlerOption.GeopackageEnabled)
+            {
+                await CreateGeoPackage(cancellationToken);
+            }
 
-        _logger.LogWarning("Upload to Azure Blob completed.");
-        _logger.LogWarning(GetIdentifier().GetValue(ZipKey.ExtractDoneMessage));
-        _disposed = true;
+            await _azureZipArchiveStream.DisposeAsync();
+
+            _logger.LogWarning("Upload to Azure Blob completed.");
+            _logger.LogWarning(GetIdentifier().GetValue(ZipKey.ExtractDoneMessage));
+            _disposed = true;
+        }
+    }
+
+    private async Task CreateGeoPackage(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var workDir = "geopackages";
+            if (Directory.Exists(workDir))
+                Directory.Delete(workDir, true);
+
+            Directory.CreateDirectory(workDir);
+            _azureZipArchiveStream.Seek(0, SeekOrigin.Begin);
+            var downloadShapeZip = Path.Combine(workDir, $"{GetIdentifier().GetValue(ZipKey.AzureZip)}");
+            await using var fileStream = new FileStream(downloadShapeZip, FileMode.Create, FileAccess.Write);
+            await _azureZipArchiveStream.CopyToAsync(fileStream, cancellationToken);
+            fileStream.Close();
+            var extractPath = Path.Combine(workDir);
+            ZipFile.ExtractToDirectory(downloadShapeZip, extractPath, true);
+            File.Delete(downloadShapeZip);
+
+            var dataDirs = Directory.GetDirectories(workDir, "*_GRAR_*_Data", SearchOption.TopDirectoryOnly);
+            if (dataDirs.Length == 0)
+                throw new InvalidOperationException("No *_GRAR_*_Data directory found.");
+
+            if (dataDirs.Length > 1)
+                throw new InvalidOperationException(
+                    "Multiple *_GRAR_*_Data directories found; handle selection explicitly.");
+
+            string dataRoot = dataDirs[0];
+
+            // 2) Shapefile + metadata paths
+            string shapeFilesDir = Path.Combine(dataRoot, "Shapefile");
+            //find all files with .shp
+            var shapeFiles = Path.Exists(shapeFilesDir)
+                ? Directory.GetFiles(shapeFilesDir, "*.shp", SearchOption.TopDirectoryOnly)
+                : [];
+            //find all files with _metdata.dbf
+            var shapeMetaFiles = Path.Exists(shapeFilesDir)
+                ? Directory.GetFiles(shapeFilesDir, "*_metadata.dbf", SearchOption.TopDirectoryOnly)
+                : [];
+            //all dBASE files
+            var dbaseFilesDir = Path.Combine(dataRoot, "dBASE");
+            var dbaseFiles = Path.Exists(dbaseFilesDir)
+                ? Directory.GetFiles(dbaseFilesDir, "*.dbf", SearchOption.TopDirectoryOnly)
+                : [];
+
+            string geopkgDir = Path.Combine(dataRoot, "Geopackage");
+            Directory.CreateDirectory(geopkgDir);
+            string outGpkg = Path.Combine(geopkgDir, GetIdentifier().GetValue(ZipKey.GeoPackage));
+
+            foreach (var shapeFile in shapeFiles)
+            {
+                var layerName = Path.GetFileNameWithoutExtension(shapeFile);
+                await RunOgr2OgrAsync(
+                    // first call creates the geopackage
+                    $"ogr2ogr -f GPKG \"{outGpkg}\" \"{shapeFile}\" " +
+                    $"-nln \"{layerName}\" -nlt PROMOTE_TO_MULTI " +
+                    "-lco SPATIAL_INDEX=YES -dsco WRITE_BBOX=YES -oo ENCODING=UTF-8",
+                    shapeFilesDir,
+                    cancellationToken);
+            }
+
+            foreach (var metaFile in shapeMetaFiles)
+            {
+                var layerName = Path.GetFileNameWithoutExtension(metaFile);
+                // 5) Append metadata DBF as a non-spatial table in the same GPKG
+                await RunOgr2OgrAsync(
+                    // -update: open existing gpkg
+                    // -nlt NONE: non-spatial table
+                    "ogr2ogr -f GPKG -update -append " +
+                    $"\"{outGpkg}\" \"{metaFile}\" " +
+                    $"-nln \"{layerName}\" -nlt NONE",
+                    shapeFilesDir,
+                    cancellationToken
+                );
+            }
+
+            foreach (var dbaseFile in dbaseFiles)
+            {
+                var layerName = Path.GetFileNameWithoutExtension(dbaseFile);
+                if (shapeFiles.Any())
+                {
+                    // 5) Append metadata DBF as a non-spatial table in the same GPKG
+                    await RunOgr2OgrAsync(
+                        // -update: open existing gpkg
+                        // -nlt NONE: non-spatial table
+                        "ogr2ogr -f GPKG -update -append " +
+                        $"\"{outGpkg}\" \"{dbaseFile}\" " +
+                        $"-nln \"{layerName}\" -nlt NONE",
+                        dbaseFilesDir,
+                        cancellationToken
+                    );
+                }
+                else
+                {
+                    // No shapefiles found, so create the geopackage from the dBASE files
+                    await RunOgr2OgrAsync(
+                        // first call creates the geopackage
+                        $"ogr2ogr -f GPKG \"{outGpkg}\" \"{dbaseFile}\" " +
+                        $"-nln \"{layerName}\" -nlt NONE",
+                        dbaseFilesDir,
+                        cancellationToken);
+                }
+            }
+
+            if (Path.Exists(Path.Combine(workDir, dataRoot, "Shapefile")))
+                Directory.Delete(Path.Combine(workDir, dataRoot, "Shapefile"), true);
+
+            if (Path.Exists(Path.Combine(workDir, dataRoot, "dBASE")))
+                Directory.Delete(Path.Combine(workDir, dataRoot, "dBASE"), true);
+
+            //create new zip and upload to azure if enabled, otherwise s3
+            await using var geopackageZipStream = new MemoryStream();
+            using var geopackageZip = new ZipArchive(geopackageZipStream, ZipArchiveMode.Create, true);
+            //zip all files and directories in the workDir with same folder structure
+            foreach (var filePath in Directory.GetFiles(workDir, "*", SearchOption.AllDirectories))
+            {
+                var entryName = Path.GetRelativePath(workDir, filePath);
+                geopackageZip.CreateEntryFromFile(filePath, entryName);
+            }
+
+            geopackageZip.Dispose();
+            geopackageZipStream.Seek(0, SeekOrigin.Begin);
+
+            await _azureBlobClient.UploadBlobInChunksAsync(
+                geopackageZipStream,
+                GetIdentifier(),
+                isGeoPackage: true,
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating geopackage.");
+        }
     }
 
     private async Task AddToS3ZipArchiveAsync(Stream zipArchiveStream, CancellationToken cancellationToken = default)
@@ -161,6 +306,36 @@ public abstract class BaseBundler : IDisposable
             instructionPdfAsBytes,
             cancellationToken);
     }
+
+    public static async Task RunOgr2OgrAsync(string command, string workingDir, CancellationToken ct)
+    {
+        var psi = new ProcessStartInfo
+        {
+            FileName = "bash",
+            Arguments = $"-lc \"{command}\"",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            WorkingDirectory = workingDir
+        };
+
+        using var p = Process.Start(psi)!;
+
+        // Start reading both streams concurrently to avoid deadlocks.
+        var stdoutTask = p.StandardOutput.ReadToEndAsync();
+        var stderrTask = p.StandardError.ReadToEndAsync();
+
+        // Wait for process exit and for both reads to complete.
+        await Task.WhenAll(p.WaitForExitAsync(ct), stdoutTask, stderrTask).ConfigureAwait(false);
+
+        var stdout = await stdoutTask.ConfigureAwait(false);
+        var stderr = await stderrTask.ConfigureAwait(false);
+
+        if (p.ExitCode != 0)
+            throw new InvalidOperationException(
+                $"ogr2ogr failed (exit {p.ExitCode}).\nCMD: {command}\nSTDOUT:\n{stdout}\nSTDERR:\n{stderr}");
+    }
+
 
     protected abstract Identifier GetIdentifier();
 
