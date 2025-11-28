@@ -199,6 +199,8 @@ public abstract class BaseBundler : IDisposable
             {
                 var layerName = Path.GetFileNameWithoutExtension(dbaseFile);
                 var absoluteDbaseFile = Path.GetFullPath(dbaseFile);
+                _logger.LogWarning($"Attempting to process: {absoluteDbaseFile}");
+                _logger.LogWarning($"File exists: {File.Exists(absoluteDbaseFile)}");
                 if (shapeFiles.Any() || dbaseFile != dbaseFiles.First())
                 {
                     // 5) Append metadata DBF as a non-spatial table in the same GPKG
@@ -326,14 +328,17 @@ public abstract class BaseBundler : IDisposable
 
     public static async Task RunOgr2OgrAsync(string command, string workingDir, CancellationToken ct)
     {
+        // Parse command into executable and arguments
+        var parts = command.Split(' ', 2);
+
         var psi = new ProcessStartInfo
         {
-            FileName = "bash",
-            Arguments = $"-lc \"{command}\"",
+            FileName = "ogr2ogr",  // Direct call
+            Arguments = parts.Length > 1 ? parts[1] : "",
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
-            //WorkingDirectory = workingDir
+            EnvironmentVariables = { ["GDAL_DATA"] = "/usr/share/gdal" }
         };
 
         using var p = Process.Start(psi)!;
