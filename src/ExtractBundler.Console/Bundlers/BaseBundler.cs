@@ -150,27 +150,28 @@ public abstract class BaseBundler : IDisposable
 
             string geopkgDir = Path.Combine(dataRoot, "Geopackage");
             Directory.CreateDirectory(geopkgDir);
-            string outGpkg = Path.Combine(geopkgDir, GetIdentifier().GetValue(ZipKey.GeoPackage));
+            string outGpkg = Path.GetFullPath(Path.Combine(geopkgDir, GetIdentifier().GetValue(ZipKey.GeoPackage)));
 
             foreach (var shapeFile in shapeFiles)
             {
                 var layerName = Path.GetFileNameWithoutExtension(shapeFile);
+                var absoluteShapeFile = Path.GetFullPath(shapeFile);
                 if (shapeFile != shapeFiles.First())
                 {
                     await RunOgr2OgrAsync(
                         // -update: open existing gpkg
                         "ogr2ogr -f GPKG -update -append " +
-                        $"\"{outGpkg}\" \"{shapeFile}\" " +
+                        $"\"{outGpkg}\" \"{absoluteShapeFile}\" " +
                         $"-nln \"{layerName}\" -nlt PROMOTE_TO_MULTI " +
                         "-lco SPATIAL_INDEX=YES -dsco WRITE_BBOX=YES -oo ENCODING=UTF-8",
-                        dbaseFilesDir,
+                        shapeFilesDir,
                         cancellationToken);
                 }
                 else
                 {
                     await RunOgr2OgrAsync(
                         // first call creates the geopackage
-                        $"ogr2ogr -f GPKG \"{outGpkg}\" \"{shapeFile}\" " +
+                        $"ogr2ogr -f GPKG \"{outGpkg}\" \"{absoluteShapeFile}\" " +
                         $"-nln \"{layerName}\" -nlt PROMOTE_TO_MULTI " +
                         "-lco SPATIAL_INDEX=YES -dsco WRITE_BBOX=YES -oo ENCODING=UTF-8",
                         shapeFilesDir,
@@ -181,12 +182,13 @@ public abstract class BaseBundler : IDisposable
             foreach (var metaFile in shapeMetaFiles)
             {
                 var layerName = Path.GetFileNameWithoutExtension(metaFile);
+                var absoluteMetaFile = Path.GetFullPath(metaFile);
                 // 5) Append metadata DBF as a non-spatial table in the same GPKG
                 await RunOgr2OgrAsync(
                     // -update: open existing gpkg
                     // -nlt NONE: non-spatial table
                     "ogr2ogr -f GPKG -update -append " +
-                    $"\"{outGpkg}\" \"{metaFile}\" " +
+                    $"\"{outGpkg}\" \"{absoluteMetaFile}\" " +
                     $"-nln \"{layerName}\" -nlt NONE",
                     shapeFilesDir,
                     cancellationToken
@@ -196,6 +198,7 @@ public abstract class BaseBundler : IDisposable
             foreach (var dbaseFile in dbaseFiles)
             {
                 var layerName = Path.GetFileNameWithoutExtension(dbaseFile);
+                var absoluteDbaseFile = Path.GetFullPath(dbaseFile);
                 if (shapeFiles.Any() || dbaseFile != dbaseFiles.First())
                 {
                     // 5) Append metadata DBF as a non-spatial table in the same GPKG
@@ -203,7 +206,7 @@ public abstract class BaseBundler : IDisposable
                         // -update: open existing gpkg
                         // -nlt NONE: non-spatial table
                         "ogr2ogr -f GPKG -update -append " +
-                        $"\"{outGpkg}\" \"{dbaseFile}\" " +
+                        $"\"{outGpkg}\" \"{absoluteDbaseFile}\" " +
                         $"-nln \"{layerName}\" -nlt NONE",
                         dbaseFilesDir,
                         cancellationToken
@@ -214,7 +217,7 @@ public abstract class BaseBundler : IDisposable
                     // No shapefiles found, so create the geopackage from the dBASE files
                     await RunOgr2OgrAsync(
                         // first call creates the geopackage
-                        $"ogr2ogr -f GPKG \"{outGpkg}\" \"{dbaseFile}\" " +
+                        $"ogr2ogr -f GPKG \"{outGpkg}\" \"{absoluteDbaseFile}\" " +
                         $"-nln \"{layerName}\" -nlt NONE",
                         dbaseFilesDir,
                         cancellationToken);
@@ -330,7 +333,7 @@ public abstract class BaseBundler : IDisposable
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
-            WorkingDirectory = workingDir
+            //WorkingDirectory = workingDir
         };
 
         using var p = Process.Start(psi)!;
