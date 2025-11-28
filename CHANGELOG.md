@@ -1,3 +1,10 @@
+## [4.2.4](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.3...v4.2.4) (2025-11-28)
+
+
+### Bug Fixes
+
+* pathing linux absolute paths ([b2edf68](https://github.com/informatievlaanderen/extract-bundler/commit/b2edf683bbf6df07f6f6e7d461c0fa73e5f786c0))
+
 ## [4.2.3](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.2...v4.2.3) (2025-11-28)
 
 
