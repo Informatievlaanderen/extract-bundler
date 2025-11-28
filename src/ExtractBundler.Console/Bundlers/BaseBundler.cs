@@ -112,6 +112,8 @@ public abstract class BaseBundler : IDisposable
             if (Directory.Exists(workDir))
                 Directory.Delete(workDir, true);
 
+            var currentDir = Directory.GetCurrentDirectory();
+
             Directory.CreateDirectory(workDir);
             _azureZipArchiveStream.Seek(0, SeekOrigin.Begin);
             var downloadShapeZip = Path.Combine(workDir, $"{GetIdentifier().GetValue(ZipKey.AzureZip)}");
@@ -150,12 +152,14 @@ public abstract class BaseBundler : IDisposable
 
             string geopkgDir = Path.Combine(dataRoot, "Geopackage");
             Directory.CreateDirectory(geopkgDir);
-            string outGpkg = Path.GetFullPath(Path.Combine(geopkgDir, GetIdentifier().GetValue(ZipKey.GeoPackage)));
+            string outGpkg = Path.GetFullPath(Path.Combine(currentDir, geopkgDir, GetIdentifier().GetValue(ZipKey.GeoPackage)));
+
+            _logger.LogWarning($"Output GeoPackage path: {outGpkg}");
 
             foreach (var shapeFile in shapeFiles)
             {
                 var layerName = Path.GetFileNameWithoutExtension(shapeFile);
-                var absoluteShapeFile = Path.GetFullPath(shapeFile);
+                var absoluteShapeFile = Path.GetFullPath(Path.Combine(currentDir, shapeFile));
                 if (shapeFile != shapeFiles.First())
                 {
                     await RunOgr2OgrAsync(
@@ -182,7 +186,7 @@ public abstract class BaseBundler : IDisposable
             foreach (var metaFile in shapeMetaFiles)
             {
                 var layerName = Path.GetFileNameWithoutExtension(metaFile);
-                var absoluteMetaFile = Path.GetFullPath(metaFile);
+                var absoluteMetaFile = Path.GetFullPath(Path.Combine(currentDir, metaFile));
                 // 5) Append metadata DBF as a non-spatial table in the same GPKG
                 await RunOgr2OgrAsync(
                     // -update: open existing gpkg
@@ -198,7 +202,7 @@ public abstract class BaseBundler : IDisposable
             foreach (var dbaseFile in dbaseFiles)
             {
                 var layerName = Path.GetFileNameWithoutExtension(dbaseFile);
-                var absoluteDbaseFile = Path.GetFullPath(dbaseFile);
+                var absoluteDbaseFile = Path.GetFullPath(Path.Combine(currentDir, dbaseFile));
                 _logger.LogWarning($"Attempting to process: {absoluteDbaseFile}");
                 _logger.LogWarning($"File exists: {File.Exists(absoluteDbaseFile)}");
                 if (shapeFiles.Any() || dbaseFile != dbaseFiles.First())
