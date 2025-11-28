@@ -1,3 +1,10 @@
+## [4.2.5](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.4...v4.2.5) (2025-11-28)
+
+
+### Bug Fixes
+
+* add logging to delete directories ([f779c5c](https://github.com/informatievlaanderen/extract-bundler/commit/f779c5c513c786e366c4898bfc258bbf803a1e41))
+
 ## [4.2.4](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.3...v4.2.4) (2025-11-28)
 
 
