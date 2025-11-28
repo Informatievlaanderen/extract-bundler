@@ -1,3 +1,10 @@
+## [4.2.2](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.1...v4.2.2) (2025-11-28)
+
+
+### Bug Fixes
+
+* use absolute paths for ogr2ogr ([5492c8a](https://github.com/informatievlaanderen/extract-bundler/commit/5492c8a175dc893cd82e07424f4ad43d3be4118f))
+
 ## [4.2.1](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.0...v4.2.1) (2025-11-28)
 
 
