@@ -1,3 +1,10 @@
+## [4.2.3](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.2...v4.2.3) (2025-11-28)
+
+
+### Bug Fixes
+
+* use process directly instead of shell ([18e2d51](https://github.com/informatievlaanderen/extract-bundler/commit/18e2d51ba653e2d5b4df85f10341f96390842627))
+
 ## [4.2.2](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.1...v4.2.2) (2025-11-28)
 
 
