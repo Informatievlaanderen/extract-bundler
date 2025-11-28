@@ -1,3 +1,10 @@
+## [4.2.1](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.0...v4.2.1) (2025-11-28)
+
+
+### Bug Fixes
+
+* add handle multiple shp dbf files ([a4ed0d5](https://github.com/informatievlaanderen/extract-bundler/commit/a4ed0d567e8d15aee709e1c8a8b3c6f2beb19696))
+
 # [4.2.0](https://github.com/informatievlaanderen/extract-bundler/compare/v4.1.1...v4.2.0) (2025-11-28)
 
 
