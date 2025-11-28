@@ -155,13 +155,27 @@ public abstract class BaseBundler : IDisposable
             foreach (var shapeFile in shapeFiles)
             {
                 var layerName = Path.GetFileNameWithoutExtension(shapeFile);
-                await RunOgr2OgrAsync(
-                    // first call creates the geopackage
-                    $"ogr2ogr -f GPKG \"{outGpkg}\" \"{shapeFile}\" " +
-                    $"-nln \"{layerName}\" -nlt PROMOTE_TO_MULTI " +
-                    "-lco SPATIAL_INDEX=YES -dsco WRITE_BBOX=YES -oo ENCODING=UTF-8",
-                    shapeFilesDir,
-                    cancellationToken);
+                if (shapeFile != shapeFiles.First())
+                {
+                    await RunOgr2OgrAsync(
+                        // -update: open existing gpkg
+                        "ogr2ogr -f GPKG -update -append " +
+                        $"\"{outGpkg}\" \"{shapeFile}\" " +
+                        $"-nln \"{layerName}\" -nlt PROMOTE_TO_MULTI " +
+                        "-lco SPATIAL_INDEX=YES -dsco WRITE_BBOX=YES -oo ENCODING=UTF-8",
+                        dbaseFilesDir,
+                        cancellationToken);
+                }
+                else
+                {
+                    await RunOgr2OgrAsync(
+                        // first call creates the geopackage
+                        $"ogr2ogr -f GPKG \"{outGpkg}\" \"{shapeFile}\" " +
+                        $"-nln \"{layerName}\" -nlt PROMOTE_TO_MULTI " +
+                        "-lco SPATIAL_INDEX=YES -dsco WRITE_BBOX=YES -oo ENCODING=UTF-8",
+                        shapeFilesDir,
+                        cancellationToken);
+                }
             }
 
             foreach (var metaFile in shapeMetaFiles)
@@ -182,7 +196,7 @@ public abstract class BaseBundler : IDisposable
             foreach (var dbaseFile in dbaseFiles)
             {
                 var layerName = Path.GetFileNameWithoutExtension(dbaseFile);
-                if (shapeFiles.Any())
+                if (shapeFiles.Any() || dbaseFile != dbaseFiles.First())
                 {
                     // 5) Append metadata DBF as a non-spatial table in the same GPKG
                     await RunOgr2OgrAsync(
@@ -334,6 +348,8 @@ public abstract class BaseBundler : IDisposable
         if (p.ExitCode != 0)
             throw new InvalidOperationException(
                 $"ogr2ogr failed (exit {p.ExitCode}).\nCMD: {command}\nSTDOUT:\n{stdout}\nSTDERR:\n{stderr}");
+
+        await Task.Delay(1000, ct); // Allow file handles to release
     }
 
 
