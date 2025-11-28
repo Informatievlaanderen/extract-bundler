@@ -1,3 +1,10 @@
+# [4.2.0](https://github.com/informatievlaanderen/extract-bundler/compare/v4.1.1...v4.2.0) (2025-11-28)
+
+
+### Features
+
+* add geopackage GAWR-7027 ([24f3b23](https://github.com/informatievlaanderen/extract-bundler/commit/24f3b230737c8107ec5031f2793f42cccb977399))
+
 ## [4.1.1](https://github.com/informatievlaanderen/extract-bundler/compare/v4.1.0...v4.1.1) (2025-10-28)
 
 
