@@ -1,3 +1,10 @@
+## [4.2.6](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.5...v4.2.6) (2025-12-01)
+
+
+### Bug Fixes
+
+* try removing shp + dbf dirs ([5b77808](https://github.com/informatievlaanderen/extract-bundler/commit/5b77808b5f8e39ea1449a9dbf49ee30d599ce374))
+
 ## [4.2.5](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.4...v4.2.5) (2025-11-28)
 
 
