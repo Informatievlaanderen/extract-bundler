@@ -230,16 +230,16 @@ public abstract class BaseBundler : IDisposable
                 }
             }
 
-            if (Directory.Exists(Path.Combine(workDir, dataRoot, "Shapefile")))
+            if (Directory.Exists(Path.Combine(dataRoot, "Shapefile")))
             {
                 _logger.LogWarning("Removing Shapefile directory");
-                Directory.Delete(Path.Combine(workDir, dataRoot, "Shapefile"), true);
+                Directory.Delete(Path.Combine(dataRoot, "Shapefile"), true);
             }
 
-            if (Directory.Exists(Path.Combine(workDir, dataRoot, "dBASE")))
+            if (Directory.Exists(Path.Combine(dataRoot, "dBASE")))
             {
                 _logger.LogWarning("Removing dBASE directory");
-                Directory.Delete(Path.Combine(workDir, dataRoot, "dBASE"), true);
+                Directory.Delete(Path.Combine(dataRoot, "dBASE"), true);
             }
 
             //create new zip and upload to azure if enabled, otherwise s3
