@@ -1,3 +1,10 @@
+## [4.2.8](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.7...v4.2.8) (2025-12-03)
+
+
+### Bug Fixes
+
+* encoding using correct GDAL encoding ([fee9ef1](https://github.com/informatievlaanderen/extract-bundler/commit/fee9ef1fcec82444e43376691c945e65dc7683bf))
+
 ## [4.2.7](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.6...v4.2.7) (2025-12-03)
 
 
