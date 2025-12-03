@@ -4,9 +4,9 @@
     "net9.0": {
       "Autofac": {
         "type": "Direct",
-        "requested": "[8.3.0, )",
-        "resolved": "8.3.0",
-        "contentHash": "0Bv8aSKuK4nQAiDKw3+pIv9hUhbPwS63ql9KhjR6DRgE14UNdXrMqO8YMI0PnffZPyCrMs85lNhZRI4eBgQO4w==",
+        "requested": "[8.4.0, )",
+        "resolved": "8.4.0",
+        "contentHash": "XMWHyO6fXTv8rwCfhm6+64mQS6CyL0rve/hWSODsUrVuEGtq1fjxSOlVTBqCRsW6L8K3OQDskJaPB1boVMI2eQ==",
         "dependencies": {
           "System.Diagnostics.DiagnosticSource": "8.0.1"
         }
@@ -716,7 +716,7 @@
       "extractbundler": {
         "type": "Project",
         "dependencies": {
-          "Autofac": "[8.3.0, )"
+          "Autofac": "[8.4.0, )"
         }
       },
       "extractbundler.console": {
@@ -724,7 +724,7 @@
         "dependencies": {
           "AWSSDK.Extensions.NETCore.Setup": "[3.7.400, )",
           "AWSSDK.S3": "[3.7.416.10, )",
-          "Autofac": "[8.3.0, )",
+          "Autofac": "[8.4.0, )",
           "Autofac.Extensions.DependencyInjection": "[10.0.0, )",
           "Azure.Storage.Blobs": "[12.24.0, )",
           "Be.Vlaanderen.Basisregisters.Aws.DistributedMutex": "[5.0.0, )",
