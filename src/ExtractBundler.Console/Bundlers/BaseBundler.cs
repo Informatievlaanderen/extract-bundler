@@ -167,7 +167,7 @@ public abstract class BaseBundler : IDisposable
                         "ogr2ogr -f GPKG -update -append " +
                         $"\"{outGpkg}\" \"{absoluteShapeFile}\" " +
                         $"-nln \"{layerName}\" -nlt PROMOTE_TO_MULTI " +
-                        "-lco SPATIAL_INDEX=YES -dsco WRITE_BBOX=YES -oo ENCODING=1252",
+                        "-lco SPATIAL_INDEX=YES -dsco WRITE_BBOX=YES -oo ENCODING=CP1252",
                         shapeFilesDir,
                         cancellationToken);
                 }
@@ -177,7 +177,7 @@ public abstract class BaseBundler : IDisposable
                         // first call creates the geopackage
                         $"ogr2ogr -f GPKG \"{outGpkg}\" \"{absoluteShapeFile}\" " +
                         $"-nln \"{layerName}\" -nlt PROMOTE_TO_MULTI " +
-                        "-lco SPATIAL_INDEX=YES -dsco WRITE_BBOX=YES -oo ENCODING=1252",
+                        "-lco SPATIAL_INDEX=YES -dsco WRITE_BBOX=YES -oo ENCODING=CP1252",
                         shapeFilesDir,
                         cancellationToken);
                 }
@@ -193,7 +193,7 @@ public abstract class BaseBundler : IDisposable
                     // -nlt NONE: non-spatial table
                     "ogr2ogr -f GPKG -update -append " +
                     $"\"{outGpkg}\" \"{absoluteMetaFile}\" " +
-                    $"-nln \"{layerName}\" -nlt NONE -oo ENCODING=1252",
+                    $"-nln \"{layerName}\" -nlt NONE -oo ENCODING=CP1252",
                     shapeFilesDir,
                     cancellationToken
                 );
@@ -213,7 +213,7 @@ public abstract class BaseBundler : IDisposable
                         // -nlt NONE: non-spatial table
                         "ogr2ogr -f GPKG -update -append " +
                         $"\"{outGpkg}\" \"{absoluteDbaseFile}\" " +
-                        $"-nln \"{layerName}\" -nlt NONE -oo ENCODING=1252",
+                        $"-nln \"{layerName}\" -nlt NONE -oo ENCODING=CP1252",
                         dbaseFilesDir,
                         cancellationToken
                     );
@@ -224,7 +224,7 @@ public abstract class BaseBundler : IDisposable
                     await RunOgr2OgrAsync(
                         // first call creates the geopackage
                         $"ogr2ogr -f GPKG \"{outGpkg}\" \"{absoluteDbaseFile}\" " +
-                        $"-nln \"{layerName}\" -nlt NONE -oo ENCODING=1252",
+                        $"-nln \"{layerName}\" -nlt NONE -oo ENCODING=CP1252",
                         dbaseFilesDir,
                         cancellationToken);
                 }
