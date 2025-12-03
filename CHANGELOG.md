@@ -1,3 +1,10 @@
+## [4.2.7](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.6...v4.2.7) (2025-12-03)
+
+
+### Bug Fixes
+
+* encoding geopackage ([740e9ae](https://github.com/informatievlaanderen/extract-bundler/commit/740e9ae1172a4310662ce6e59918e2a69363033f))
+
 ## [4.2.6](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.5...v4.2.6) (2025-12-01)
 
 
