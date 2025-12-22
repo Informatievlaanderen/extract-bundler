@@ -18,7 +18,7 @@
         <PackageVersion Include="Be.Vlaanderen.Basisregisters.BlobStore" Version="5.0.0" />
         <PackageVersion Include="Be.Vlaanderen.Basisregisters.GrAr.Notifications" Version="22.0.0" />
 
-        <PackageVersion Include="Datadog.Trace.Bundle" Version="3.16.0" />
+        <PackageVersion Include="Datadog.Trace.Bundle" Version="3.34.0" />
 
         <PackageVersion Include="Destructurama.JsonNet" Version="4.0.2" />
 
