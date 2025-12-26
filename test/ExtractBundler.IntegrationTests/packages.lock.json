@@ -82,8 +82,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.402.40",
-        "contentHash": "DSJubHYjaugwA0tiktUxHF5cyaXlN/L9YoXSTTrie3qk16KMAWIiM7P6o7s8wEnkZLtiZQGEerHO+Ov0nmQ5vw=="
+        "resolved": "3.7.500.60",
+        "contentHash": "OTOwH357H5hoXfJ2oYynHf7rLZo2FHuaAanucsZGCnFawXzKjYv9TiqlVcWgSMCvgUVF0jC4ApEs2olzMYbgIA=="
       },
       "AWSSDK.DynamoDBv2": {
         "type": "Transitive",
@@ -723,7 +723,7 @@
         "type": "Project",
         "dependencies": {
           "AWSSDK.Extensions.NETCore.Setup": "[3.7.400, )",
-          "AWSSDK.S3": "[3.7.416.10, )",
+          "AWSSDK.S3": "[3.7.509.1, )",
           "Autofac": "[8.3.0, )",
           "Autofac.Extensions.DependencyInjection": "[10.0.0, )",
           "Azure.Storage.Blobs": "[12.24.0, )",
@@ -769,11 +769,11 @@
       },
       "AWSSDK.S3": {
         "type": "CentralTransitive",
-        "requested": "[3.7.416.10, )",
-        "resolved": "3.7.416.10",
-        "contentHash": "HPW2fj2tRi49XzP/IMyid2LLGoeaz2jHeqK7r1MA/0o/rjWZihl9T+1FjgMyLekvEDkV88kUoF5D9L+vQ4R6KQ==",
+        "requested": "[3.7.509.1, )",
+        "resolved": "3.7.509.1",
+        "contentHash": "Ugz92talwtlUCnBBF12YOPCBBRUtpHhzU1YmO8ITHeOtiQ3uQkAfHgmwwiFJQVLEReyMiQCZ/x+tpb1CF9g3Kg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.402.40, 4.0.0)"
+          "AWSSDK.Core": "[3.7.500.60, 4.0.0)"
         }
       },
       "Azure.Storage.Blobs": {
