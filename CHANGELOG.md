@@ -1,3 +1,15 @@
+# [5.0.0](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.8...v5.0.0) (2026-07-02)
+
+
+### Features
+
+* update packages + upgrade to dotnet 10 ([b9b8175](https://github.com/informatievlaanderen/extract-bundler/commit/b9b81759fbde01974e7dc22e98b5cf5eae9a8614))
+
+
+### BREAKING CHANGES
+
+* update to dotnet 10
+
 ## [4.2.8](https://github.com/informatievlaanderen/extract-bundler/compare/v4.2.7...v4.2.8) (2025-12-03)
 
 
