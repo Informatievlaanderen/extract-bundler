@@ -4,9 +4,9 @@
     "net10.0": {
       "Autofac": {
         "type": "Direct",
-        "requested": "[9.3.0, )",
-        "resolved": "9.3.0",
-        "contentHash": "OXigGAa1oFYbHmI9lEEYYSRQvbtGC3AnNdg+4BEhHa0x8XlJrYOS7Sg5fZtmlrHPLp+gRsDnz2aqbsglNUnv0g=="
+        "requested": "[9.3.2, )",
+        "resolved": "9.3.2",
+        "contentHash": "an3dLpmXWvb2aBP5qyA7GVEcXhoG+W/EtFRa3sBYzJdXSNDnB0aoeo4MgOQru0G5sjNDGYM3D3CnBzNFXEVOOA=="
       },
       "Be.Vlaanderen.Basisregisters.DockerUtilities": {
         "type": "Direct",
@@ -658,7 +658,7 @@
       "extractbundler": {
         "type": "Project",
         "dependencies": {
-          "Autofac": "[9.3.0, )"
+          "Autofac": "[9.3.2, )"
         }
       },
       "extractbundler.console": {
@@ -666,7 +666,7 @@
         "dependencies": {
           "AWSSDK.Extensions.NETCore.Setup": "[4.0.100.1, )",
           "AWSSDK.S3": "[4.0.100.1, )",
-          "Autofac": "[9.3.0, )",
+          "Autofac": "[9.3.2, )",
           "Autofac.Extensions.DependencyInjection": "[11.0.1, )",
           "Azure.Storage.Blobs": "[12.29.1, )",
           "Be.Vlaanderen.Basisregisters.Aws.DistributedMutex": "[5.1.0, )",

@@ -4,9 +4,9 @@
     ".NETStandard,Version=v2.1": {
       "Autofac": {
         "type": "Direct",
-        "requested": "[9.3.0, )",
-        "resolved": "9.3.0",
-        "contentHash": "OXigGAa1oFYbHmI9lEEYYSRQvbtGC3AnNdg+4BEhHa0x8XlJrYOS7Sg5fZtmlrHPLp+gRsDnz2aqbsglNUnv0g==",
+        "requested": "[9.3.2, )",
+        "resolved": "9.3.2",
+        "contentHash": "an3dLpmXWvb2aBP5qyA7GVEcXhoG+W/EtFRa3sBYzJdXSNDnB0aoeo4MgOQru0G5sjNDGYM3D3CnBzNFXEVOOA==",
         "dependencies": {
           "System.Diagnostics.DiagnosticSource": "10.0.0"
         }
