@@ -131,8 +131,8 @@
       },
       "Datadog.Trace": {
         "type": "Transitive",
-        "resolved": "3.48.0",
-        "contentHash": "2SGQTXM+t3E9BBNTylpXy0wQZD0h4c27gzICUtW402GpPPoh7VWhFw2f9BGBb7koazAr6OjCsjHhNp11gACmnQ=="
+        "resolved": "3.53.0",
+        "contentHash": "yIzbYsaKfBGT9LKGOChZeAfktgfZeulPaO220V/oRfF3IwHLidnsfahNW5qw68QlPDaJXSqLlYe2qTLyJlS1Vg=="
       },
       "Ductus.FluentDocker": {
         "type": "Transitive",
@@ -672,7 +672,7 @@
           "Be.Vlaanderen.Basisregisters.Aws.DistributedMutex": "[5.1.0, )",
           "Be.Vlaanderen.Basisregisters.BlobStore": "[5.1.0, )",
           "Be.Vlaanderen.Basisregisters.GrAr.Notifications": "[24.4.1, )",
-          "Datadog.Trace.Bundle": "[3.48.0, )",
+          "Datadog.Trace.Bundle": "[3.53.0, )",
           "Destructurama.JsonNet": "[4.0.2, )",
           "Duende.IdentityModel": "[8.1.0, )",
           "ExtractBundler": "[1.0.0, )",
@@ -761,11 +761,11 @@
       },
       "Datadog.Trace.Bundle": {
         "type": "CentralTransitive",
-        "requested": "[3.48.0, )",
-        "resolved": "3.48.0",
-        "contentHash": "wL8OJP9Jii4TgeTSigSOppzd7OUfnlGigYaCfBa3PaJ9WRk9giqmEuz32MubiGO8e0zwC/rYThuFG2XIsVQIrg==",
+        "requested": "[3.53.0, )",
+        "resolved": "3.53.0",
+        "contentHash": "qE5v4n/0awk8CfibjKtxRnN6ai8VWSwjWsWF/pzMJPw6OmONU9AwPf8gGlaIJOCItWQkd7p8NPJXPqL/Iez/fw==",
         "dependencies": {
-          "Datadog.Trace": "3.48.0"
+          "Datadog.Trace": "3.53.0"
         }
       },
       "Destructurama.JsonNet": {
