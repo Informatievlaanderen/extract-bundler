@@ -82,11 +82,11 @@
       },
       "Datadog.Trace.Bundle": {
         "type": "Direct",
-        "requested": "[3.48.0, )",
-        "resolved": "3.48.0",
-        "contentHash": "wL8OJP9Jii4TgeTSigSOppzd7OUfnlGigYaCfBa3PaJ9WRk9giqmEuz32MubiGO8e0zwC/rYThuFG2XIsVQIrg==",
+        "requested": "[3.54.0, )",
+        "resolved": "3.54.0",
+        "contentHash": "DeBQkKNDzvpeXMCPPI83Q6L8IUjybHoB/lXecQHvl+meedksQoO4QeXIt+ossFhXOuvPM7VDFo/yKxwj1PqY+A==",
         "dependencies": {
-          "Datadog.Trace": "3.48.0"
+          "Datadog.Trace": "3.54.0"
         }
       },
       "Destructurama.JsonNet": {
@@ -265,8 +265,8 @@
       },
       "Datadog.Trace": {
         "type": "Transitive",
-        "resolved": "3.48.0",
-        "contentHash": "2SGQTXM+t3E9BBNTylpXy0wQZD0h4c27gzICUtW402GpPPoh7VWhFw2f9BGBb7koazAr6OjCsjHhNp11gACmnQ=="
+        "resolved": "3.54.0",
+        "contentHash": "7bGNrR6ymITgunJWAtj7W7Vu80f3BHsfqZMFkM/ZDIHjlr3RJTSkBSsGaRJaQ935jBrme8sf+FyAfkrhDVNstw=="
       },
       "Microsoft.Bcl.AsyncInterfaces": {
         "type": "Transitive",
