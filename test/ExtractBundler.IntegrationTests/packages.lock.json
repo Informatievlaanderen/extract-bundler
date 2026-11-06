@@ -79,8 +79,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "4.0.100.1",
-        "contentHash": "kOSGVgWvxz3V8CYX9BDQ46DLsHumW0YjOMJHpns5iNCt1kzEISpTluL/+HMmXMoqIS+KSeoEvjtJWclaoGVlKw=="
+        "resolved": "4.0.102.19",
+        "contentHash": "Hb6P2ui6y0U+UNUjcC4ASFFoTLzCijhMzfOCXfoFTXq/o0YWQsO1oSH1NG2GQ9dlIT693xeeih0yAcfeL1dphg=="
       },
       "AWSSDK.DynamoDBv2": {
         "type": "Transitive",
@@ -664,8 +664,8 @@
       "extractbundler.console": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.Extensions.NETCore.Setup": "[4.0.100.1, )",
-          "AWSSDK.S3": "[4.0.100.1, )",
+          "AWSSDK.Extensions.NETCore.Setup": "[4.0.102.10, )",
+          "AWSSDK.S3": "[4.0.104.11, )",
           "Autofac": "[9.3.0, )",
           "Autofac.Extensions.DependencyInjection": "[11.0.1, )",
           "Azure.Storage.Blobs": "[12.29.1, )",
@@ -699,11 +699,11 @@
       },
       "AWSSDK.Extensions.NETCore.Setup": {
         "type": "CentralTransitive",
-        "requested": "[4.0.100.1, )",
-        "resolved": "4.0.100.1",
-        "contentHash": "BbyTnJcTSHmnjNVQjqg3R3GwB0WYlQ2DieB7WW+5w9K7kh4BDM7iTAjtIHkwGwLDopC4/GtkuKnosOzUiHBqkQ==",
+        "requested": "[4.0.102.10, )",
+        "resolved": "4.0.102.10",
+        "contentHash": "XDEpeD7lhyudu3vHyOGPMeT31hBnRX1zexCnpHvb8St1rqgLqDE01D6I8mqX7ewmJrehaJcAmeuz7cDw4RXjfg==",
         "dependencies": {
-          "AWSSDK.Core": "4.0.100.1",
+          "AWSSDK.Core": "4.0.102.19",
           "Microsoft.Extensions.Configuration.Abstractions": "2.0.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "2.0.0"
@@ -711,11 +711,11 @@
       },
       "AWSSDK.S3": {
         "type": "CentralTransitive",
-        "requested": "[4.0.100.1, )",
-        "resolved": "4.0.100.1",
-        "contentHash": "iG570ekeZyBcMNIVX0AjeZRKT7+PPrRrhi2KkDULYmmDScGFMSeshDn5EqBmiMLd31BQeSZvZhIxAEXQTWLdpA==",
+        "requested": "[4.0.104.11, )",
+        "resolved": "4.0.104.11",
+        "contentHash": "leP2ZC3gVaNHXZleKOMHmedex6fTrr6u1ZQFuezIGjT01oPwP0j6YI00jlPwlakTC0Uo5a0eOOY2Q/eYzsU9wg==",
         "dependencies": {
-          "AWSSDK.Core": "[4.0.100.1, 5.0.0)"
+          "AWSSDK.Core": "[4.0.102.19, 5.0.0)"
         }
       },
       "Azure.Storage.Blobs": {
